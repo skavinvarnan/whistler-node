@@ -5,19 +5,21 @@
  */
 
 const errorResponse = {
-  INVALID_ENDPOINT: { code: 404, message: 'Invalid endpoint' },
+  INVALID_ENDPOINT: { code: 400, message: 'Invalid endpoint' },
   INTERNAL_SERVER_ERROR: { code: 500, message: 'Internal server error' },
   UNAUTHORISED: { code: 401, message: 'Unauthorised' },
   NOT_FOUND: { code: 404, message: 'Not found' },
   CONFLICT: { code: 409, message: 'Conflict' },
+  INVALID_ACCESS_TOKEN: { code: 406, message: 'Invalid access token' },
 };
 
 const errorCodes = {
-  INVALID_ENDPOINT: 404,
+  INVALID_ENDPOINT: 400,
   INTERNAL_SERVER_ERROR: 500,
   UNAUTHORISED: 401,
   NOT_FOUND: 404,
   CONFLICT: 409,
+  INVALID_ACCESS_TOKEN: 406,
 };
 
 module.exports = { errorResponse, errorCodes };

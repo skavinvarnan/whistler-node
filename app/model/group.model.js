@@ -15,6 +15,10 @@ class GroupModel {
         type: String,
         required: true,
       },
+      icon: {
+        type: String,
+        required: true,
+      },
       groupId: {
         type: String,
         required: true,
@@ -37,8 +41,8 @@ class GroupModel {
     this.model = mongoose.model('groups', schema);
   }
 
-  async createGroup(name, adminUid) {
-    const objToSave = this.model({ name,
+  async createGroup(name, adminUid, icon) {
+    const objToSave = this.model({ name, icon,
       admin: adminUid,
       members: [adminUid],
       joinCode: keygen.number({ length: 6 }),
@@ -63,6 +67,35 @@ class GroupModel {
   async listAllMyGroups(uid) {
     const groups = await this.model.find({ members: uid });
     return groups;
+  }
+
+  async leaveGroup(id, uid) {
+    const group = await this.model.findOne({ _id: id });
+    if (group) {
+      const index = group.members.indexOf(uid);
+      group.members.splice(index, 1);
+      await this.model.update({ _id: id }, group);
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  async deleteGroup(id) {
+    const group = await this.model.remove({ _id: id });
+    return !!group;
+  }
+
+  async editGroup(id, groupName, icon) {
+    const group = await this.model.findOne({ _id: id });
+    if (group) {
+      group.name = groupName;
+      group.icon = icon;
+      await this.model.update({ _id: id }, group);
+      return true;
+    } else {
+      return false;
+    }
   }
 }
 

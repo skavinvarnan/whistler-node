@@ -6,7 +6,7 @@
 
 const errorResponse = require('../error/error.codes').errorResponse;
 
-const errorGenerator = (code, alternativeCode, alternativeMessage, res) => {
+const errorGenerator = (code, err, alternativeCode, alternativeMessage, res) => {
   if (code) {
     let errorReturned = false;
     for (const [k, v] of Object.entries(errorResponse)) {
@@ -17,9 +17,9 @@ const errorGenerator = (code, alternativeCode, alternativeMessage, res) => {
         break;
       }
     }
-    if (!errorReturned) res.status(200).json({ error: { code, message: alternativeMessage } });
+    if (!errorReturned) res.status(200).json({ error: { code, message: alternativeMessage, err } });
   } else {
-    res.status(200).json({ error: { code: alternativeCode, message: alternativeMessage } });
+    res.status(200).json({ error: { code: alternativeCode, message: alternativeMessage, err } });
   }
 };
 

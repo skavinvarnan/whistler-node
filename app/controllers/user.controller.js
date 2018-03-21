@@ -20,7 +20,7 @@ class UserController {
       const user = await userModel.createUser(name, uid);
       res.status(200).json(user);
     } catch (err) {
-      errorGenerator(errorCodes.INTERNAL_SERVER_ERROR, 500, 'Internal server error', res);
+      errorGenerator(errorCodes.INTERNAL_SERVER_ERROR, err, 500, 'Internal server error', res);
     }
   }
 }

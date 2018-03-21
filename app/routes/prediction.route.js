@@ -9,7 +9,7 @@ const predictionController = require('./../controllers/prediction.controller');
 
 const router = express.Router();
 
-router.get('/predict/:match/:over/:runs', async (req, res) => {
+router.get('/predict/:matchKey/:team/:over/:runs', async (req, res) => {
   await predictionController.savePrediction(req, res);
 });
 

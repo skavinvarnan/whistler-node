@@ -13,36 +13,54 @@ class RunsController {
 
   }
 
-  async saveRuns(req, res) {
+  async createInitialModel(req, res) {
     try {
-      const match = req.params.match;
-      const over = Number(req.params.over);
-      const runs = Number(req.params.runs);
-      const savedRuns = await runsModel.saveRuns(match, over, runs);
-      if (savedRuns) {
-        res.status(200).json(savedRuns);
-      } else {
-        errorGenerator(errorCodes.CONFLICT, 500, 'Internal server error', res);
-      }
-    } catch (err) {
-      errorGenerator(errorCodes.INTERNAL_SERVER_ERROR, 500, 'Internal server error', res);
+      const matchKey = req.params.matchKey;
+      const teamA = req.params.teamA;
+      const teamB = req.params.teamB;
+      const matchObj = await runsModel.createInitialModel(matchKey, teamA, teamB);
+      res.status(200).json(matchObj);
+    } catch(err) {
+      errorGenerator(errorCodes.CONFLICT, err, 500, 'Internal server error', res);
     }
   }
 
-  async checkRunsExists(req, res) {
+  async updateRuns(req, res) {
     try {
-      const match = req.params.match;
-      const over = Number(req.params.over);
-      const isRunsExists = await runsModel.checkRunsExists(match, over);
-      if (isRunsExists) {
-        res.status(200).json({ exists: true });
+      const matchKey = req.params.matchKey;
+      const team = req.params.team;
+      const over = req.params.over;
+      const runs = req.params.runs;
+      const matchObj = await runsModel.updateRuns(matchKey, team, over, runs);
+      if (matchObj) {
+        res.status(200).json({ info: 'success' });
       } else {
-        res.status(200).json({ exists: false });
+        errorGenerator(errorCodes.NOT_FOUND, err, 500, 'Internal server error', res);
       }
-    } catch (err) {
-      errorGenerator(errorCodes.INTERNAL_SERVER_ERROR, 500, 'Internal server error', res);
+    } catch(err) {
+      errorGenerator(errorCodes.CONFLICT, err, 500, 'Internal server error', res);
     }
   }
+
+  async groupUpdateRunsOnDb(matchKey, team, overRunsArray) {
+    const matchObj = await runsModel.groupUpdateRuns(matchKey, team, overRunsArray);
+    return matchObj;
+  }
+
+  async matchResponseFromRunner(responseObj) {
+    console.log(responseObj.data.card.now.next_ball);1
+    let dbUpdateOversAndRuns = [];
+    for (let i = 0; i < responseObj.data.card.now.recent_overs.length; i++) {
+      const overNumber = responseObj.data.card.now.recent_overs[i][0];
+      let runs = 0;
+      for (let j = 0; j < responseObj.data.card.now.recent_overs[i][1].length; j++) {
+        runs = runs + responseObj.data.card.balls[responseObj.data.card.now.recent_overs[i][1][j]].runs;
+      }
+      dbUpdateOversAndRuns.push({ over: overNumber, runs });
+    }
+    this.groupUpdateRunsOnDb(responseObj.data.card.key, responseObj.data.card.now.batting_team, dbUpdateOversAndRuns);
+  }
+
 }
 
 module.exports = new RunsController();
