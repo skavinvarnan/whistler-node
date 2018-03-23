@@ -45,6 +45,10 @@ class PredictionController {
     const canPredict = await runsModel.canPredict(matchKey, team, over);
     return canPredict;
   }
+
+  async checkAndCreatePredictionForUser(matchKey, user) {
+
+  }
 }
 
 module.exports = new PredictionController();

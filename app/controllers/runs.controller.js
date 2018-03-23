@@ -7,6 +7,8 @@
 const errorGenerator = require('../error/error.factory');
 const errorCodes = require('../error/error.codes').errorCodes;
 const runsModel = require('../model/runs.model');
+const redis = require('../redis/redis.connect');
+const runsFactory = require('../factory/runs.factory');
 
 class RunsController {
   constructor() {
@@ -42,23 +44,40 @@ class RunsController {
     }
   }
 
+  async scoreBoard(req, res) {
+    try {
+      const matchKey = req.params.matchKey;
+      const string = await redis.get(matchKey);
+      const obj = JSON.parse(string);
+      if (obj == null) {
+        errorGenerator(errorCodes.NOT_FOUND, null, 500, 'Internal server error', res);
+      } else {
+        const response = runsFactory.convertToScoreCardFromRedisObject(obj);
+        res.status(200).json({scoreBoard: response});
+      }
+    } catch(err) {
+      errorGenerator(errorCodes.INTERNAL_SERVER_ERROR, err, 500, 'Internal server error', res);
+    }
+  }
+
   async groupUpdateRunsOnDb(matchKey, team, overRunsArray) {
     const matchObj = await runsModel.groupUpdateRuns(matchKey, team, overRunsArray);
     return matchObj;
   }
 
   async matchResponseFromRunner(responseObj) {
-    console.log(responseObj.data.card.now.next_ball);1
-    let dbUpdateOversAndRuns = [];
-    for (let i = 0; i < responseObj.data.card.now.recent_overs.length; i++) {
-      const overNumber = responseObj.data.card.now.recent_overs[i][0];
-      let runs = 0;
-      for (let j = 0; j < responseObj.data.card.now.recent_overs[i][1].length; j++) {
-        runs = runs + responseObj.data.card.balls[responseObj.data.card.now.recent_overs[i][1][j]].runs;
+    if (responseObj.status) {
+      let dbUpdateOversAndRuns = [];
+      for (let i = 0; i < responseObj.data.card.now.recent_overs.length; i++) {
+        const overNumber = responseObj.data.card.now.recent_overs[i][0];
+        let runs = 0;
+        for (let j = 0; j < responseObj.data.card.now.recent_overs[i][1].length; j++) {
+          runs = runs + responseObj.data.card.balls[responseObj.data.card.now.recent_overs[i][1][j]].runs;
+        }
+        dbUpdateOversAndRuns.push({over: overNumber, runs});
       }
-      dbUpdateOversAndRuns.push({ over: overNumber, runs });
+      this.groupUpdateRunsOnDb(responseObj.data.card.key, responseObj.data.card.now.batting_team, dbUpdateOversAndRuns);
     }
-    this.groupUpdateRunsOnDb(responseObj.data.card.key, responseObj.data.card.now.batting_team, dbUpdateOversAndRuns);
   }
 
 }

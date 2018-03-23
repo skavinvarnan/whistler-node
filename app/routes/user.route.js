@@ -9,8 +9,8 @@ const userController = require('./../controllers/user.controller');
 
 const router = express.Router();
 
-router.get('/create_user/:name', async (req, res) => {
-  await userController.createUser(req, res);
+router.get('/init/:name', async (req, res) => {
+  await userController.init(req, res);
 });
 
 module.exports = router;

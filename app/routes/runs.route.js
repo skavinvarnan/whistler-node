@@ -17,4 +17,8 @@ router.get('/update_runs/:matchKey/:team/:over/:runs', async (req, res) => {
   await runsController.updateRuns(req, res);
 });
 
+router.get('/score_board/:matchKey', async (req, res) => {
+  await runsController.scoreBoard(req, res);
+});
+
 module.exports = router;

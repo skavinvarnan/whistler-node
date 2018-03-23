@@ -24,10 +24,18 @@ class UserModel {
     this.model = mongoose.model('users', schema);
   }
 
-  async createUser (name, uid) {
-    const objToSave = this.model({ name, uid });
-    let savedObj = await objToSave.save();
-    return savedObj;
+  async createOrUpdateUser (name, uid) {
+    const user = await this.model.findOne({ uid });
+    if (!user) {
+      const objToSave = this.model({ name, uid });
+      let savedObj = await objToSave.save();
+      return savedObj;
+    } else {
+      user['name'] = name;
+      return await this.model.update({ uid }, user);
+    }
+
+
   }
 
 }

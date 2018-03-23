@@ -93,6 +93,10 @@ class PredictionsModel {
     return savedObj;
   }
 
+  async initNewPrediction(uid, match_key) {
+
+  }
+
 }
 
 module.exports = new PredictionsModel();

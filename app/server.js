@@ -62,6 +62,7 @@ connectToMongoDb()
   .then(() => {
     // Server started
     scheduledRunner.startAccessTokenRunner();
+    scheduledRunner.startScheduleUpdateRunner();
     scheduledRunner.startMatchRunner();
   });
 

@@ -11,6 +11,8 @@ const CronJob = require('cron').CronJob;
 const redis = require('../redis/redis.connect');
 const constants = require('../utils/constants');
 const runsController = require('../controllers/runs.controller');
+const matchController = require('../controllers/match.controller');
+const matchModel = require('../model/matches.model');
 
 class ScheduledRunner {
   constructor() {
@@ -18,22 +20,46 @@ class ScheduledRunner {
   }
 
   startAccessTokenRunner() {
-    this._fetchAccessToken().catch(err => { logger.info(err) });
+    this._fetchAccessToken().catch(err => { logger.error(err) });
     new CronJob('0 */6 * * *', async () => {
-      this._fetchAccessToken().catch(err => { logger.info(err) });
+      this._fetchAccessToken().catch(err => { logger.error(err) });
+    }, null, true);
+  }
+
+  startScheduleUpdateRunner() {
+    this._fetchSeasonSchedule().catch(err => { logger.error(err) });
+    new CronJob('*/10 * * * *', async () => {
+      this._fetchSeasonSchedule().catch(err => { logger.error(err) });
     }, null, true);
   }
 
   startMatchRunner() {
-    // new CronJob('*/15 * * * * *', async () => {
-    //   this._fetchMatchRecord().catch(err => { logger.info(err) });
-    // }, null, true);
+    new CronJob('*/15 * * * * *', async () => {
+      this._fetchMatchRecord().catch(err => { logger.error(err) });
+    }, null, true);
+  }
+
+  async _fetchSeasonSchedule() {
+    const season = 'wmntriseries_2018';
+    const redisAccessToken = await redis.get(constants.redisKeys.ACCESS_TOKEN);
+    const response = await got(`https://rest.cricketapi.com/rest/v2/season/${season}/?access_token=${redisAccessToken}`);
+    const responseObj = JSON.parse(response.body);
+    await matchController.updateMatchSchedule(responseObj);
   }
 
   async _fetchMatchRecord() {
-    const response = await got('https://rest.cricketapi.com/rest/v2/match/pslt20_2018_g30/?card_type=full_card&access_token=2s152110106595726s975044156454046156');
-    const responseObj = JSON.parse(response.body);
-    runsController.matchResponseFromRunner(responseObj);
+    const dummyTimeStamp = 1523714401;
+    const realTimeStamp = new Date().getTime() / 1000;
+    const happeningMatches = await matchModel.getHappeningSchedule(dummyTimeStamp);
+    console.log(happeningMatches.length);
+    for (let i = 0; i < happeningMatches.length; i++) {
+      const hm = happeningMatches[i].toObject();
+      const redisAccessToken = await redis.get(constants.redisKeys.ACCESS_TOKEN);
+      const response = await got(`https://rest.cricketapi.com/rest/v2/match/${hm.key}/?card_type=full_card&access_token=${redisAccessToken}`);
+      redis.set(hm.key, response.body);
+      const responseObj = JSON.parse(response.body);
+      await runsController.matchResponseFromRunner(responseObj);
+    }
   }
 
   async _fetchAccessToken() {
@@ -53,21 +79,6 @@ class ScheduledRunner {
     redis.set(constants.redisKeys.ACCESS_TOKEN, accessToken);
   }
 }
-
-const startRunner = async () => {
-  new CronJob('*/6 * * * * *', async () => {
-
-    try {
-      const response = await got('https://rest.cricketapi.com/rest/v2/season/pslt20_2018_g27/?access_token=2s152110106595726s974558539936845922');
-      console.log(response.body);
-      //=> '<!doctype html> ...'
-    } catch (error) {
-      console.log(error.response.body);
-      //=> 'Internal server error ...'
-    }
-
-  }, null, true);
-};
 
 
 module.exports = new ScheduledRunner();
