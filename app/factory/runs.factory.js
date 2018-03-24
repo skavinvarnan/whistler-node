@@ -9,49 +9,21 @@ class RunsFactory {
 
   }
 
-  convertToScoreCardFromRedisObject(obj) {
+  convertToScoreCardFromRawResponse(obj) {
     let teamShortName;
-    if (this.isEmpty(obj.data.toss)) {
-      teamShortName = 'Waiting for toss';
-    }
-
     let inningsNumber;
-
-
     let runsWickets;
-
-
     let overNumber;
-
-
     let pShipLabel;
-
-
     let pShipData;
-
-
     let crrLabel;
-
-
     let crrData;
-
-
     let rrrLabel;
-
-
     let rrrData;
-
-
     let matchInfo;
-
-
     let batsmanNameOne;
-
-
     let batsmanRunsOne;
-
     let batsmanBallsOne;
-
     let batsman4sOne;
     let batsman6sOne;
     let batsmanSROne;
@@ -67,45 +39,52 @@ class RunsFactory {
     let bowlerRuns;
     let bowlerWickets;
     let bowlerEconomy;
-    let showRrr;
     let showUpdated;
-
     let title;
 
-    let response = {
-      teamShortName: 'KXIP',
-      inningsNumber: '2',
-      runsWickets: '3-0',
-      overNumber: '4',
-      pShipLabel: '5',
-      pShipData: '6',
-      crrLabel: '7',
-      crrData: '8',
-      rrrLabel: '9',
-      rrrData: '10',
-      matchInfo: '11',
-      batsmanNameOne: '12',
-      batsmanRunsOne: '555',
-      batsmanBallsOne: '120',
-      batsman4sOne: '15',
-      batsman6sOne: '16',
-      batsmanSROne: '17',
-      batsmanNameTwo: '18',
-      batsmanRunsTwo: '888',
-      batsmanBallsTwo: '120',
-      batsman4sTwo: '21',
-      batsman6sTwo: '22',
-      batsmanSRTwo: '23',
-      bowlerName: '24',
-      bowlerOver: '25',
-      bowlerMaiden: '26',
-      bowlerRuns: '27',
-      bowlerWickets: '28',
-      bowlerEconomy: '29',
-      showRrr: true,
-      showUpdated: true,
+    if (this.isEmpty(obj.data.card.toss)) {
+      teamShortName = '--';
+      inningsNumber = '1st Inn';
+      runsWickets = '';
+      overNumber = '';
+      pShipLabel = 'P\'SHIP:';
+      pShipLabel = '';
+      pShipData = '';
+      crrLabel = 'CRR:';
+      crrLabel = '';
+      crrData = '';
+      rrrLabel = '';
+      rrrData = '';
+      matchInfo = 'Waiting for toss';
+      batsmanNameOne = '-';
+      batsmanRunsOne = '-';
+      batsmanBallsOne = '-';
+      batsman4sOne = '-';
+      batsman6sOne = '-';
+      batsmanSROne = '-';
+      batsmanNameTwo = '-';
+      batsmanRunsTwo = '-';
+      batsmanBallsTwo = '-';
+      batsman4sTwo = '-';
+      batsman6sTwo = '-';
+      batsmanSRTwo = '-';
+      bowlerName = '-';
+      bowlerOver = '-';
+      bowlerMaiden = '-';
+      bowlerRuns = '-';
+      bowlerWickets = '-';
+      bowlerEconomy = '-';
+      showUpdated = true;
+      title = obj.data.card.short_name;
+    }
 
-      title: 'asdf',
+
+
+    let response = {
+      teamShortName, inningsNumber, runsWickets, overNumber, pShipLabel, pShipData, crrLabel, crrData,
+      rrrLabel, rrrData, matchInfo, batsmanNameOne, batsmanRunsOne, batsmanBallsOne, batsman4sOne, batsman6sOne,
+      batsmanSROne, batsmanNameTwo, batsmanRunsTwo, batsmanBallsTwo, batsman4sTwo, batsman6sTwo, batsmanSRTwo,
+      bowlerName, bowlerOver, bowlerMaiden, bowlerRuns, bowlerWickets, bowlerEconomy, showUpdated, title,
     };
     return response;
   }

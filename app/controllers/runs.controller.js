@@ -52,8 +52,7 @@ class RunsController {
       if (obj == null) {
         errorGenerator(errorCodes.NOT_FOUND, null, 500, 'Internal server error', res);
       } else {
-        const response = runsFactory.convertToScoreCardFromRedisObject(obj);
-        res.status(200).json({scoreBoard: response});
+        res.status(200).json({scoreBoard: obj});
       }
     } catch(err) {
       errorGenerator(errorCodes.INTERNAL_SERVER_ERROR, err, 500, 'Internal server error', res);
@@ -65,7 +64,7 @@ class RunsController {
     return matchObj;
   }
 
-  async matchResponseFromRunner(responseObj) {
+  async computeRunsForResponse(responseObj) {
     if (responseObj.status) {
       let dbUpdateOversAndRuns = [];
       for (let i = 0; i < responseObj.data.card.now.recent_overs.length; i++) {

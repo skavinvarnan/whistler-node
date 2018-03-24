@@ -14,6 +14,49 @@ class PredictionController {
 
   }
 
+  async myPredictionTable(req, res) {
+    try {
+      let response = [
+        {
+          'over': {
+            'label': '7',
+            'colorHex': "#fffbe2",
+            'whiteText': false,
+            'clickable': false,
+            'radius': 5,
+          }, 'runs': {
+            'label': '2',
+            'colorHex': "#a7f8ff",
+            'clickable': false,
+            'whiteText': true,
+            'radius': 5,
+          }, 'predicted': {
+            'label': '12',
+            'colorHex': "#0012ff",
+            'clickable': false,
+            'whiteText': true,
+            'radius': 15,
+          }, 'points': {
+            'label': '4',
+            'colorHex': "#0eff70",
+            'clickable': false,
+            'whiteText': true,
+            'radius': 5,
+          }, 'predictButton': {
+            'label': 'Predict',
+            'colorHex': "#fff737",
+            'clickable': true,
+            'whiteText': true,
+            'radius': 5,
+          }
+        },
+      ];
+      res.status(200).json({ predictPointsTableData: response })
+    } catch (err) {
+      errorGenerator(errorCodes.INTERNAL_SERVER_ERROR, err, 500, 'Internal server error', res);
+    }
+  }
+
   async savePrediction(req, res) {
     try {
       const uid = req.headers.uid;
@@ -28,7 +71,7 @@ class PredictionController {
           if (prediction === errorCodes.CONFLICT) {
             errorGenerator(errorCodes.CONFLICT, null, 500, 'Internal server error', res);
           } else {
-            res.status(200).json({info: 'success'});
+            res.status(200).json({ success: true });
           }
         } else {
           errorGenerator(errorCodes.NOT_FOUND, null, 500, 'Internal server error', res);

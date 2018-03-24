@@ -13,4 +13,8 @@ router.get('/predict/:matchKey/:team/:over/:runs', async (req, res) => {
   await predictionController.savePrediction(req, res);
 });
 
+router.get('/my_prediction_table/:matchKey', async (req, res) => {
+  await predictionController.myPredictionTable(req, res);
+});
+
 module.exports = router;

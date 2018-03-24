@@ -13,6 +13,8 @@ const constants = require('../utils/constants');
 const runsController = require('../controllers/runs.controller');
 const matchController = require('../controllers/match.controller');
 const matchModel = require('../model/matches.model');
+const dumpModel = require('../model/dumpmatch.model');
+const runsFactory = require('../factory/runs.factory');
 
 class ScheduledRunner {
   constructor() {
@@ -48,7 +50,7 @@ class ScheduledRunner {
   }
 
   async _fetchMatchRecord() {
-    const dummyTimeStamp = 1523714401;
+    const dummyTimeStamp = 1521788407;
     const realTimeStamp = new Date().getTime() / 1000;
     const happeningMatches = await matchModel.getHappeningSchedule(dummyTimeStamp);
     console.log(happeningMatches.length);
@@ -56,9 +58,16 @@ class ScheduledRunner {
       const hm = happeningMatches[i].toObject();
       const redisAccessToken = await redis.get(constants.redisKeys.ACCESS_TOKEN);
       const response = await got(`https://rest.cricketapi.com/rest/v2/match/${hm.key}/?card_type=full_card&access_token=${redisAccessToken}`);
-      redis.set(hm.key, response.body);
-      const responseObj = JSON.parse(response.body);
-      await runsController.matchResponseFromRunner(responseObj);
+      const bodyObj = JSON.parse(response.body);
+      if (bodyObj.status) {
+        const scoreCard = runsFactory.convertToScoreCardFromRawResponse(bodyObj);
+        redis.set(hm.key, JSON.stringify(scoreCard));
+        redis.set(`${hm.key}_raw`, response.body);
+        await dumpModel.dumpMatch(bodyObj);
+        await runsController.computeRunsForResponse(bodyObj);
+      } else {
+        logger.error(`Response status is ${bodyObj.status_code}`)
+      }
     }
   }
 
