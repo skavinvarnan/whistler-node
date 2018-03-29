@@ -8,6 +8,9 @@ const errorGenerator = require('../error/error.factory');
 const errorCodes = require('../error/error.codes').errorCodes;
 const predictionModel = require('../model/predictions.model');
 const runsModel = require('../model/runs.model');
+const redis = require('../redis/redis.connect');
+const predictionFactory = require("../factory/prediction.factory");
+const pointsModel = require("../model/points.model");
 
 class PredictionController {
   constructor() {
@@ -16,42 +19,39 @@ class PredictionController {
 
   async myPredictionTable(req, res) {
     try {
-      let response = [
-        {
-          'over': {
-            'label': '7',
-            'colorHex': "#fffbe2",
-            'whiteText': false,
-            'clickable': false,
-            'radius': 5,
-          }, 'runs': {
-            'label': '2',
-            'colorHex': "#a7f8ff",
-            'clickable': false,
-            'whiteText': true,
-            'radius': 5,
-          }, 'predicted': {
-            'label': '12',
-            'colorHex': "#0012ff",
-            'clickable': false,
-            'whiteText': true,
-            'radius': 15,
-          }, 'points': {
-            'label': '4',
-            'colorHex': "#0eff70",
-            'clickable': false,
-            'whiteText': true,
-            'radius': 5,
-          }, 'predictButton': {
-            'label': 'Predict',
-            'colorHex': "#fff737",
-            'clickable': true,
-            'whiteText': true,
-            'radius': 5,
-          }
-        },
-      ];
+      const uid = req.headers.uid;
+      const matchKey = req.params.matchKey;
+      let prediction = await predictionModel.getPredictionForUser(matchKey, uid);
+      if (!prediction) {
+        prediction = await this.createPredictionForUser(matchKey, uid);
+      }
+      let points = await pointsModel.getPointsForUser(matchKey, uid);
+      if (!points) {
+        points = await this.createPointsForUser(matchKey, uid);
+      }
+      const runsObj = await runsModel.getRuns(matchKey);
+      const response = predictionFactory.createUserPredictionTable(runsObj, prediction, points);
       res.status(200).json({ predictPointsTableData: response })
+    } catch (err) {
+      errorGenerator(errorCodes.INTERNAL_SERVER_ERROR, err, 500, 'Internal server error', res);
+    }
+  }
+
+  async userPredictionReport(req, res) {
+    try {
+      const uid = req.params.uid;
+      const matchKey = req.params.matchKey;
+      let prediction = await predictionModel.getPredictionForUser(matchKey, uid);
+      if (!prediction) {
+        prediction = await this.createPredictionForUser(matchKey, uid);
+      }
+      let points = await pointsModel.getPointsForUser(matchKey, uid);
+      if (!points) {
+        points = await this.createPointsForUser(matchKey, uid);
+      }
+      const runsObj = await runsModel.getRuns(matchKey);
+      const response = predictionFactory.getUserPredictionReport(runsObj, prediction, points);
+      res.status(200).json({ userPrediction: response })
     } catch (err) {
       errorGenerator(errorCodes.INTERNAL_SERVER_ERROR, err, 500, 'Internal server error', res);
     }
@@ -68,11 +68,7 @@ class PredictionController {
       if (canPredict) {
         const prediction = await predictionModel.savePrediction(uid, matchKey, team, over, runs);
         if (prediction) {
-          if (prediction === errorCodes.CONFLICT) {
-            errorGenerator(errorCodes.CONFLICT, null, 500, 'Internal server error', res);
-          } else {
-            res.status(200).json({ success: true });
-          }
+          res.status(200).json({ success: true });
         } else {
           errorGenerator(errorCodes.NOT_FOUND, null, 500, 'Internal server error', res);
         }
@@ -89,8 +85,14 @@ class PredictionController {
     return canPredict;
   }
 
-  async checkAndCreatePredictionForUser(matchKey, user) {
+  async createPredictionForUser(matchKey, uid) {
+    const prediction = await predictionModel.createPredictionForUser(matchKey, uid);
+    return prediction;
+  }
 
+  async createPointsForUser(matchKey, uid) {
+    const points = await pointsModel.createPointsForUser(matchKey, uid);
+    return points;
   }
 }
 

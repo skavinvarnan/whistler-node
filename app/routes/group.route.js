@@ -38,4 +38,8 @@ router.get('/edit_group/:id/:groupName/:icon', async (req, res) => {
   await groupController.editGroup(req, res);
 });
 
+router.get('/get_everyone_form_group/:id/:matchKey', async (req, res) => {
+  await groupController.getEveryoneFormGroup(req, res);
+});
+
 module.exports = router;

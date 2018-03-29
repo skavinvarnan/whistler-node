@@ -19,6 +19,7 @@ class PointsController {
     await overAllPointsModel.createOverAllPoints(uid);
   }
 
+
 }
 
 module.exports = new PointsController();

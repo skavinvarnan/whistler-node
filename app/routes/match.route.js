@@ -18,4 +18,10 @@ router.get('/happening_schedule', async (req, res) => {
   await matchController.getHappeningSchedule(req, res);
 });
 
+router.get('/all_match_points/:uid', async (req, res) => {
+  await matchController.getAllMatchPointsForUser(req, res);
+});
+
+
+
 module.exports = router;

@@ -64,6 +64,7 @@ connectToMongoDb()
     scheduledRunner.startAccessTokenRunner();
     scheduledRunner.startScheduleUpdateRunner();
     scheduledRunner.startMatchRunner();
+    scheduledRunner.startPointsComputationRunner();
   });
 
 

@@ -7,6 +7,9 @@
 const errorGenerator = require('../error/error.factory');
 const errorCodes = require('../error/error.codes').errorCodes;
 const groupModel = require('../model/group.model');
+const pointsModel = require('../model/points.model');
+const userModel = require('../model/user.model');
+const overAllPointsModel = require('../model/overallpoints.model');
 
 class GroupController {
 
@@ -107,6 +110,28 @@ class GroupController {
         errorGenerator(errorCodes.NOT_FOUND, null, 500, 'Internal server error', res);
       }
     } catch(err) {
+      errorGenerator(errorCodes.INTERNAL_SERVER_ERROR, err, 500, 'Internal server error', res);
+    }
+  }
+
+  async getEveryoneFormGroup(req, res) {
+    try {
+      const id = req.params.id;
+      const matchKey = req.params.matchKey;
+      const group = await groupModel.getGroup(id);
+      if (group) {
+        const points = await pointsModel.getPointsForUsersOnlyUidAndTotal(matchKey, group.members);
+        const users = await userModel.getUsersWithUids(group.members);
+        const overAllPoints = await overAllPointsModel.getOverAllPointsWithUids(group.members);
+
+        let merge1 = users.map(x => Object.assign(x, points.find(y => y.uid === x.uid)));
+        let merge2 = merge1.map(x => Object.assign(x, overAllPoints.find(y => y.uid === x.uid)));
+        res.status(200).json({ groupMembers: merge2 });
+
+      } else {
+        errorGenerator(errorCodes.NOT_FOUND, null, 500, 'Internal server error', res);
+      }
+    } catch (err) {
       errorGenerator(errorCodes.INTERNAL_SERVER_ERROR, err, 500, 'Internal server error', res);
     }
   }

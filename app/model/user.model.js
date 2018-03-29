@@ -38,6 +38,15 @@ class UserModel {
 
   }
 
+  async getUsersWithUids(uids) {
+    const resArr = await this.model.find({ uid: uids });
+    let arr = [];
+    resArr.forEach(obj => {
+      arr.push(obj.toObject());
+    });
+    return arr;
+  }
+
 }
 
 module.exports = new UserModel();

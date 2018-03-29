@@ -13,6 +13,10 @@ router.post('/ping', async (req, res) => {
   res.status(200).json({ server: 'alive' });
 });
 
+router.get('/test123', async (req, res) => {
+  await testController.test123(req, res);
+});
+
 router.post('/test', async (req, res) => {
   await testController.createMatches(req, res);
 });

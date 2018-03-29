@@ -17,4 +17,8 @@ router.get('/my_prediction_table/:matchKey', async (req, res) => {
   await predictionController.myPredictionTable(req, res);
 });
 
+router.get('/user_prediction/:uid/:matchKey', async (req, res) => {
+  await predictionController.userPredictionReport(req, res);
+});
+
 module.exports = router;

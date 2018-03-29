@@ -63,14 +63,13 @@ class PredictionsModel {
   async savePrediction(uid, match_key, team, over, runs) {
     const prediction = await this.model.findOne({ uid, match_key });
     if (!prediction) {
-      return await this.createNewPrediction(uid, match_key, team, over, runs)
+      const t = await this.createNewPrediction(uid, match_key, team, over, runs);
+      return t;
     } else {
       const key = `${team}_${over}`;
-      if (prediction[key] !== -1) {
-        return errorCodes.CONFLICT;
-      }
       prediction[key] = runs;
-      return await this.model.update({ uid, match_key }, prediction);
+      const t = await this.model.update({ uid, match_key }, prediction);
+      return t;
     }
   }
 
@@ -93,8 +92,38 @@ class PredictionsModel {
     return savedObj;
   }
 
-  async initNewPrediction(uid, match_key) {
+  async getPredictionForUser(match_key, uid) {
+    let prediction = await this.model.findOne({ uid, match_key });
+    if (prediction) {
+      prediction = prediction.toObject();
+      return prediction;
+    } else {
+      return null;
+    }
+  }
 
+
+  async createPredictionForUser(match_key, uid) {
+    const runsObj = await runsModel.getRuns(match_key);
+    if (!runsObj) {
+      return null;
+    }
+
+    const data = { uid, match_key, team_a: runsObj['team_a'], team_b: runsObj['team_b'],
+      a_1: -1, a_2: -1, a_3: -1, a_4: -1, a_5: -1, a_6: -1, a_7: -1, a_8: -1, a_9: -1, a_10: -1,
+      a_11: -1, a_12: -1, a_13: -1, a_14: -1, a_15: -1, a_16: -1, a_17: -1, a_18: -1, a_19: -1, a_20: -1,
+      b_1: -1, b_2: -1, b_3: -1, b_4: -1, b_5: -1, b_6: -1, b_7: -1, b_8: -1, b_9: -1, b_10: -1,
+      b_11: -1, b_12: -1, b_13: -1, b_14: -1, b_15: -1, b_16: -1, b_17: -1, b_18: -1, b_19: -1, b_20: -1 };
+
+    const objToSave = this.model(data);
+    let savedObj = await objToSave.save();
+    savedObj = savedObj.toObject();
+    return savedObj;
+  }
+
+  async getAllUserWithMatchKeyAndNotPredictedForOver(match_key, overStr) {
+    const predictions = await this.model.find({ match_key, overStr: { $ne: -1 } })
+    return predictions;
   }
 
 }

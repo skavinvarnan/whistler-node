@@ -8,6 +8,7 @@ const errorGenerator = require('../error/error.factory');
 const errorCodes = require('../error/error.codes').errorCodes;
 const matchModel = require('../model/matches.model');
 const logger = require('../logger/logger');
+const overAllPointsModel = require('../model/overallpoints.model');
 
 class MatchController {
   constructor() {
@@ -51,7 +52,6 @@ class MatchController {
       }
       res.status(200).json({ schedule: responseSchedule })
     } catch(err) {
-      console.log(err);
       errorGenerator(errorCodes.INTERNAL_SERVER_ERROR, err, 500, 'Internal server error', res);
     }
   }
@@ -77,6 +77,26 @@ class MatchController {
       logger.error("Failed to update matches");
     }
 
+  }
+
+  async getAllMatchPointsForUser(req, res) {
+    try {
+      const season = 'iplt20_2018';
+      const uid = req.params.uid;
+      const allMatches = await matchModel.getAllMatchesForSeason(season);
+      const overAllPointsObj = await overAllPointsModel.getForUser(uid);
+      let response = [];
+      for (let i = 0; i < allMatches.length; i++) {
+        let points = overAllPointsObj['individual'][allMatches[i].key];
+        points = points ? points : 0;
+        let mat = allMatches[i].toObject();
+        const obj = {match: mat.short_name, key: mat.key, points };
+        response.push(obj);
+      }
+      res.status(200).json({ allMatches: response });
+    } catch (err) {
+      errorGenerator(errorCodes.INTERNAL_SERVER_ERROR, err, 500, 'Internal server error', res);
+    }
   }
 }
 

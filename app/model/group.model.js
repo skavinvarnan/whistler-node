@@ -69,6 +69,16 @@ class GroupModel {
     return groups;
   }
 
+  async getGroup(id) {
+    let group = await this.model.findOne({ _id: id });
+    if (group) {
+      group = group.toObject();
+      return group;
+    } else {
+      return null;
+    }
+  }
+
   async leaveGroup(id, uid) {
     const group = await this.model.findOne({ _id: id });
     if (group) {

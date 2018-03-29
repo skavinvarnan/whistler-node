@@ -51,7 +51,9 @@ class MatchModel {
   }
 
   async getHappeningSchedule(timeStamp) {
-    const arr = await this.model.find({ start_date_timestamp: { $lt: timeStamp }, approx_end_date_timestamp: { $gt: timeStamp }, approx_completed_ts: {$exists: false} })
+    const ts = timeStamp - (60 * 15);
+    const arr = await this.model.find( { $or: [ { start_date_timestamp: { $lt: timeStamp }, approx_end_date_timestamp: { $gt: timeStamp }, approx_completed_ts: {$exists: false} } ,
+        {approx_completed_ts: {$gt: ts}} ] }  )
       .select('status name short_name venue winner_team msgs start_date start_date_timestamp teams related_name key');
     return arr;
   }
@@ -60,6 +62,11 @@ class MatchModel {
     for (let i = 0; i < array.length; i++) {
       await this.model.update({key: array[i].key}, array[i]);
     }
+  }
+
+  async getAllMatchesForSeason(season) {
+    const arr = await this.model.find({'key' : { $regex : '^' + season }}).sort({start_date_timestamp: 1});
+    return arr;
   }
 }
 
