@@ -41,9 +41,17 @@ class PredictionFactory {
       } else if (runsObj.innings_number === 'second') {
         teamBatting = runsObj.first_batting === 'a' ? 'b' : 'a';
         teamNumber = teamBatting === 'a' ? 0 : 1;
-      } else if (runsObj.innings_number === 'second') {
-
+      } else if (runsObj.innings_number === 'other') {
+        if (runsObj.is_completed) {
+          teamBatting = runsObj.first_batting === 'a' ? 'b' : 'a';
+          teamNumber = teamBatting === 'a' ? 0 : 1;
+        } else {
+          teamBatting = runsObj.first_batting;
+          teamNumber = teamBatting === 'a' ? 0 : 1;
+        }
       }
+    } else {
+      return null;
     }
 
 
@@ -70,7 +78,9 @@ class PredictionFactory {
 
         for (let i = 0; i < (numberOfRecords + futurePredictionsAllowedCount); i++) {
           overItems.push(this.generateIndividualItem(`${i + 1}`, '#FFFFFF', false));
-          runsItems.push(this.generateIndividualItem(`${runsObj[this.teamRunsKey[teamNumber][i]]}`, '#FFFFFF', false));
+
+          const runsLabel = runsObj[this.teamRunsKey[teamNumber][i]] === -1 ? 'NA' : `${runsObj[this.teamRunsKey[teamNumber][i]]}`;
+          runsItems.push(this.generateIndividualItem(runsLabel, '#FFFFFF', false));
 
           const predictionColor = predictionObj[this.teamRunsKey[teamNumber][i]] === -1 ? '#FFFFFF' : '#5AC8FA';
           const predictionLabel = predictionObj[this.teamRunsKey[teamNumber][i]] === -1 ? 'NA' : `${predictionObj[this.teamRunsKey[teamNumber][i]]}`;
@@ -103,7 +113,7 @@ class PredictionFactory {
           }
         }
 
-        return this.generateTableItems(itemsToDisplay, overItems, runsItems, predictedItems, pointsItems, predictButtonItems);
+        return { teamBatting, response: this.generateTableItems(itemsToDisplay, overItems, runsItems, predictedItems, pointsItems, predictButtonItems) };
 
       } else {
         const overItems = [];
@@ -112,20 +122,41 @@ class PredictionFactory {
         const pointsItems = [];
         const predictButtonItems = [];
 
-        for (let i = 0; i < numberOfRecords; i++) {
+        for (let i = 0; i < (numberOfRecords + futurePredictionsAllowedCount); i++) {
           // Toss done but the first ball is not bolwed
           overItems.push(this.generateIndividualItem(`${i + 1}`, '#FFFFFF', false));
-          runsItems.push(this.generateIndividualItem(`${runsObj[this.teamRunsKey[teamNumber][i]]}`, '#FFFFFF', false));
-          predictedItems.push(this.generateIndividualItem(`${predictionObj[this.teamRunsKey[teamNumber][i]]}`, '#FFFFFF', false)); // runs is dynamic
-          pointsItems.push(this.generateIndividualItem(`${pointsObj[this.teamRunsKey[teamNumber][i]]}`, '#FFFFFF', false)); // dynamic
+          const runsLabel = runsObj[this.teamRunsKey[teamNumber][i]] === -1 ? 'NA' : `${runsObj[this.teamRunsKey[teamNumber][i]]}`;
+          runsItems.push(this.generateIndividualItem(runsLabel, '#FFFFFF', false));
+
+          const predictionColor = predictionObj[this.teamRunsKey[teamNumber][i]] === -1 ? '#FFFFFF' : '#5AC8FA';
+          const predictionLabel = predictionObj[this.teamRunsKey[teamNumber][i]] === -1 ? 'NA' : `${predictionObj[this.teamRunsKey[teamNumber][i]]}`;
+          predictedItems.push(this.generateIndividualItem(predictionLabel, predictionColor, false)); // runs is dynamic
+
+
+          const points = pointsObj[this.teamRunsKey[teamNumber][i]];
+          let pointsColor;
+          if (points === 0) {
+            pointsColor = '#FFFFFF';
+          } else if (points === 1) {
+            pointsColor = '#4CD964';
+          } else if (points === 5) {
+            pointsColor = '#FF3B30';
+          } else if (points === 7) {
+            pointsColor = '#007AFF';
+          } else if (points === 10) {
+            pointsColor = '#bb63cc';
+          } else {
+            pointsColor = '#000000';
+          }
+          pointsItems.push(this.generateIndividualItem(`${points}`, pointsColor, false)); // dynamic
           predictButtonItems.push(this.generateIndividualItem('Predict', '#FFFFFF', true)); // dynamic
         }
 
-        return this.generateTableItems(numberOfRecords, overItems, runsItems, predictedItems, pointsItems, predictButtonItems);
+        return { teamBatting, response: this.generateTableItems((numberOfRecords + futurePredictionsAllowedCount), overItems, runsItems, predictedItems, pointsItems, predictButtonItems) };
 
       }
     } else {
-      return []; // This is the pedios when the pre match start and the toss is not done
+      return null; // This is the pedios when the pre match start and the toss is not done
     }
   }
 

@@ -24,6 +24,12 @@ class ScheduledRunner {
 
   }
 
+  getTimeStamp() {
+    const dummyTimeStamp = 1525188784;
+    const realTimeStamp = new Date().getTime() / 1000;
+    return dummyTimeStamp;
+  }
+
   startAccessTokenRunner() {
     this._fetchAccessToken().catch(err => { logger.error(err) });
     new CronJob('0 */6 * * *', async () => {
@@ -40,24 +46,21 @@ class ScheduledRunner {
 
   startMatchRunner() {
     new CronJob('*/15 * * * * *', async () => {
-      this._fetchMatchRecord().catch(err => { logger.error(err) });
+      // this._fetchMatchRecord().catch(err => { logger.error(err) });
     }, null, true);
   }
 
   startPointsComputationRunner() {
-    new CronJob('*/10 * * * * *', async () => {
+    new CronJob('*/30 * * * * *', async () => {
       this._computePoints().catch(err => { logger.error(err) });
     }, null, true);
   }
 
   async _computePoints() {
-    const dummyTimeStamp = 1523114041;
-    const realTimeStamp = new Date().getTime() / 1000;
-    const happeningMatches = await matchModel.getHappeningSchedule(dummyTimeStamp);
+    const happeningMatches = await matchModel.getHappeningSchedule(this.getTimeStamp());
     for (let i = 0; i < happeningMatches.length; i++) {
       const hm = happeningMatches[i].toObject();
       const pointsComputedObj = await pointsComputedModel.getForMatchKey(hm.key);
-      logger.info(` happeneing ${pointsComputedObj['team_a']}`);
       const runsObj = await runsModel.getRuns(hm.key);
       await pointsService.computeRunsForMatch(pointsComputedObj, runsObj);
     }
@@ -77,9 +80,7 @@ class ScheduledRunner {
 
   async _fetchMatchRecord() {
     try {
-      const dummyTimeStamp = 1523714401;
-      const realTimeStamp = new Date().getTime() / 1000;
-      const happeningMatches = await matchModel.getHappeningSchedule(realTimeStamp);
+      const happeningMatches = await matchModel.getHappeningSchedule(this.getTimeStamp());
       console.log(happeningMatches.length);
       for (let i = 0; i < happeningMatches.length; i++) {
         const hm = happeningMatches[i].toObject();

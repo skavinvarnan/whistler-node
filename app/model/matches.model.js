@@ -68,6 +68,18 @@ class MatchModel {
     const arr = await this.model.find({'key' : { $regex : '^' + season }}).sort({start_date_timestamp: 1});
     return arr;
   }
+
+  async getSomeMatchToDisplay() {
+    let someMatchOne = await this.model.findOne({approx_completed_ts: { $exists: true} }).sort({start_date_timestamp: -1});
+    if (someMatchOne) {
+      someMatchOne = someMatchOne.toObject();
+      return someMatchOne;
+    } else {
+      let someMatchTwo = await this.model.findOne({approx_completed_ts: { $exists: false} }).sort({start_date_timestamp: 1});
+      someMatchTwo = someMatchTwo.toObject();
+      return someMatchTwo;
+    }
+  }
 }
 
 module.exports = new MatchModel();

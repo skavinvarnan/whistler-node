@@ -30,7 +30,7 @@ class GroupController {
 
   async joinGroup(req, res) {
     try {
-      const groupId = req.params.groupId;
+      const groupId = req.params.groupId.toLowerCase();
       const joinCode = req.params.joinCode;
       const uid = req.headers.uid;
       const isJoinSuccess = await groupModel.joinGroup(groupId, joinCode, uid);

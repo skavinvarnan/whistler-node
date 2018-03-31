@@ -20,6 +20,10 @@ class PredictionController {
   async myPredictionTable(req, res) {
     try {
       const uid = req.headers.uid;
+      if (!uid) {
+        errorGenerator(errorCodes.INTERNAL_SERVER_ERROR, err, 500, 'Internal server error', res);
+        return;
+      }
       const matchKey = req.params.matchKey;
       let prediction = await predictionModel.getPredictionForUser(matchKey, uid);
       if (!prediction) {
@@ -31,8 +35,13 @@ class PredictionController {
       }
       const runsObj = await runsModel.getRuns(matchKey);
       const response = predictionFactory.createUserPredictionTable(runsObj, prediction, points);
-      res.status(200).json({ predictPointsTableData: response })
+      if (response && response.response) {
+        res.status(200).json({predictPointsTableData: response.response, teamBatting: response.teamBatting})
+      } else {
+        errorGenerator(errorCodes.MATCH_YET_TO_START, null, 500, 'Internal server error', res);
+      }
     } catch (err) {
+      console.log(err);
       errorGenerator(errorCodes.INTERNAL_SERVER_ERROR, err, 500, 'Internal server error', res);
     }
   }

@@ -31,8 +31,16 @@ class PointsFactory {
         teamBatting = runsObj.first_batting === 'a' ? 'b' : 'a';
         teamNumber = teamBatting === 'a' ? 0 : 1;
       } else if (runsObj.innings_number === 'other') {
-        // handle case
+        if (runsObj.is_completed) {
+          teamBatting = runsObj.first_batting === 'a' ? 'b' : 'a';
+          teamNumber = teamBatting === 'a' ? 0 : 1;
+        } else {
+          teamBatting = runsObj.first_batting;
+          teamNumber = teamBatting === 'a' ? 0 : 1;
+        }
       }
+    } else {
+      return;
     }
 
     for (let i = 0; i < this.teamRunsKey[0].length; i++) {

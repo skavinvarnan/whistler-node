@@ -11,6 +11,7 @@ const errorResponse = {
   NOT_FOUND: { code: 404, message: 'Not found' },
   CONFLICT: { code: 409, message: 'Conflict' },
   INVALID_ACCESS_TOKEN: { code: 406, message: 'Invalid access token' },
+  MATCH_YET_TO_START: { code: 4001, message: 'Waiting for toss' },
 };
 
 const errorCodes = {
@@ -20,6 +21,7 @@ const errorCodes = {
   NOT_FOUND: 404,
   CONFLICT: 409,
   INVALID_ACCESS_TOKEN: 406,
+  MATCH_YET_TO_START: 4001,
 };
 
 module.exports = { errorResponse, errorCodes };

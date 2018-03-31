@@ -32,6 +32,7 @@ function startServer() {
       const app = express();
       const server = http.Server(app);
 
+      app.use(require('express-status-monitor')());
       app.use(cors());
       app.use(bodyParser.json());
       app.use(bodyParser.urlencoded({extended: true}));

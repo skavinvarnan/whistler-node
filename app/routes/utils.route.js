@@ -21,4 +21,8 @@ router.post('/test', async (req, res) => {
   await testController.createMatches(req, res);
 });
 
+router.get('/testzzz', async (req, res) => {
+  await testController.test(req, res);
+});
+
 module.exports = router;

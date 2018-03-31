@@ -17,7 +17,7 @@ class MatchController {
 
   async getHappeningSchedule(req, res) {
     try {
-      const dummyTimeStamp = 1523714401;
+      const dummyTimeStamp = 1525188784;
       const realTimeStamp = new Date().getTime() / 1000;
       const schedule = await matchModel.getHappeningSchedule(dummyTimeStamp);
       const responseSchedule = [];
@@ -47,6 +47,17 @@ class MatchController {
         sc.team_b = sc.teams.b.key;
         sc.team_a_name = sc.teams.a.name;
         sc.team_b_name = sc.teams.b.name;
+        const sd = new Date((sc.start_date_timestamp * 1000) + (1000 * 60 * 30));
+        const weekday = new Array(7);
+        weekday[0] =  "Sunday";
+        weekday[1] = "Monday";
+        weekday[2] = "Tuesday";
+        weekday[3] = "Wednesday";
+        weekday[4] = "Thursday";
+        weekday[5] = "Friday";
+        weekday[6] = "Saturday";
+        sc.displayDate = `${sd.getDate()}/${sd.getMonth() + 1} - ${weekday[sd.getDay()]}`;
+        sc.displayTime = `${sd.getHours()}:${sd.getMinutes()}0`;
         delete sc.teams;
         responseSchedule.push(sc);
       }
@@ -94,6 +105,25 @@ class MatchController {
         response.push(obj);
       }
       res.status(200).json({ allMatches: response });
+    } catch (err) {
+      errorGenerator(errorCodes.INTERNAL_SERVER_ERROR, err, 500, 'Internal server error', res);
+    }
+  }
+
+  async getSomeMatchToDisplay(req, res) {
+    try {
+      const schedule = await matchModel.getSomeMatchToDisplay();
+      const responseSchedule = [];
+      for (let i = 0; i < 1; i++) {
+        const sc = schedule;
+        sc.team_a = sc.teams.a.key;
+        sc.team_b = sc.teams.b.key;
+        sc.team_a_name = sc.teams.a.name;
+        sc.team_b_name = sc.teams.b.name;
+        delete sc.teams;
+        responseSchedule.push(sc);
+      }
+      res.status(200).json({ schedule: responseSchedule })
     } catch (err) {
       errorGenerator(errorCodes.INTERNAL_SERVER_ERROR, err, 500, 'Internal server error', res);
     }

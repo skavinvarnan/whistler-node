@@ -22,6 +22,10 @@ router.get('/all_match_points/:uid', async (req, res) => {
   await matchController.getAllMatchPointsForUser(req, res);
 });
 
+router.get('/get_some_match_to_display', async (req, res) => {
+  await matchController.getSomeMatchToDisplay(req, res);
+});
+
 
 
 module.exports = router;
