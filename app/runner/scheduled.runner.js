@@ -27,7 +27,7 @@ class ScheduledRunner {
   getTimeStamp() {
     const dummyTimeStamp = 1525188784;
     const realTimeStamp = new Date().getTime() / 1000;
-    return dummyTimeStamp;
+    return realTimeStamp;
   }
 
   startAccessTokenRunner() {

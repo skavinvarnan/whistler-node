@@ -116,6 +116,15 @@ class PointsModel {
     });
     return arr;
   }
+
+  async getLeaderBoard(match_key) {
+    let resArr = await this.model.find({ match_key }).sort({ total_for_match: -1 }).limit(50).select('total_for_match uid');
+    let arr = [];
+    resArr.forEach(obj => {
+      arr.push(obj.toObject());
+    });
+    return arr;
+  }
 }
 
 module.exports = new PointsModel();

@@ -9,6 +9,8 @@ const errorCodes = require('../error/error.codes').errorCodes;
 const matchModel = require('../model/matches.model');
 const logger = require('../logger/logger');
 const overAllPointsModel = require('../model/overallpoints.model');
+const pointsModel = require('../model/points.model');
+const userModel = require('../model/user.model');
 
 class MatchController {
   constructor() {
@@ -19,7 +21,7 @@ class MatchController {
     try {
       const dummyTimeStamp = 1525188784;
       const realTimeStamp = new Date().getTime() / 1000;
-      const schedule = await matchModel.getHappeningSchedule(dummyTimeStamp);
+      const schedule = await matchModel.getHappeningSchedule(realTimeStamp);
       const responseSchedule = [];
       for (let i = 0; i < schedule.length; i++) {
         const sc = schedule[i].toObject();
@@ -124,6 +126,24 @@ class MatchController {
         responseSchedule.push(sc);
       }
       res.status(200).json({ schedule: responseSchedule })
+    } catch (err) {
+      errorGenerator(errorCodes.INTERNAL_SERVER_ERROR, err, 500, 'Internal server error', res);
+    }
+  }
+
+  async getLeaderBoard(req, res) {
+    try {
+      const matchKey = req.params.matchKey;
+      const leaderBoard = await pointsModel.getLeaderBoard(matchKey);
+      let uids = [];
+      for (let i = 0; i < leaderBoard.length; i++) {
+        uids.push(leaderBoard[i].uid);
+      }
+      const users = await userModel.getUsersWithUids(uids);
+
+      let dataArr = leaderBoard.map(x => Object.assign(x, users.find(y => y.uid === x.uid)));
+
+      res.status(200).json({ leaderBoard: dataArr })
     } catch (err) {
       errorGenerator(errorCodes.INTERNAL_SERVER_ERROR, err, 500, 'Internal server error', res);
     }

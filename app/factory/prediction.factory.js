@@ -98,7 +98,7 @@ class PredictionFactory {
             pointsColor = '#007AFF';
           } else if (points === 10) {
             pointsColor = '#bb63cc';
-          } else if (points === 20) {
+          } else {
             pointsColor = '#000000';
           }
           pointsItems.push(this.generateIndividualItem(`${points}`, pointsColor, false)); // dynamic

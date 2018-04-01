@@ -26,6 +26,9 @@ router.get('/get_some_match_to_display', async (req, res) => {
   await matchController.getSomeMatchToDisplay(req, res);
 });
 
+router.get('/leader_board/:matchKey', async (req, res) => {
+  await matchController.getLeaderBoard(req, res);
+});
 
 
 module.exports = router;
