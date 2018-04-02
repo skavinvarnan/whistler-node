@@ -19,7 +19,7 @@ class MatchController {
 
   async getHappeningSchedule(req, res) {
     try {
-      const dummyTimeStamp = 1525188784;
+      const dummyTimeStamp = 1525528801;
       const realTimeStamp = new Date().getTime() / 1000;
       const schedule = await matchModel.getHappeningSchedule(realTimeStamp);
       const responseSchedule = [];

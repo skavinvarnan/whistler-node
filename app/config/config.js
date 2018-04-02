@@ -8,29 +8,33 @@ const path = require('path');
 
 const config = {};
 
+config.isProd = false;
+config.showLogs = true;
+
 // Other config files
 config.log = {};
 config.log.dir = path.join(__dirname, '../../log');
 config.log.fileName = 'app.log';
 
 // Server config files
-config.serverPort = process.env.serverPort || 7325;
+config.serverPort = 7325;
 
 //DB
 config.database = {};
 
 config.database.mongo = {
-  port: 27017,
-  host: '127.0.0.1',
-  dbName: 'whistler',
-  userName: 'developer',
-  password: 'developer'
+  port: config.isProd ? 4825 : 27017,
+  host: config.isProd ? '10.160.0.2' : '127.0.0.1',
+  dbName: config.isProd ? 'whistler' : 'whistler',
+  userName: config.isProd ? 'developer' : 'developer',
+  password: config.isProd ? 'sWywMHzx9JWrEAqr': 'developer'
 };
 
 config.database.redis = {
-  port: 6379,
-  host: '127.0.0.1',
+  port: config.isProd ? 5483 : 6379,
+  host: config.isProd ? '10.160.0.2' : '127.0.0.1',
   family: 4,
+  password: config.isProd ? 'CPRSgmyE82LUhZS2' : 'LJTc88hs7qvMsZcP',
   db: 0
 };
 

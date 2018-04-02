@@ -17,8 +17,9 @@ class UserController {
   async init(req, res) {
     try {
       const name = req.params.name;
+      const email = req.params.email;
       const uid = req.headers.uid;
-      await userModel.createOrUpdateUser(name, uid);
+      await userModel.createOrUpdateUser(name, uid, email);
       await pointsController.createOverAllPointsForUser(uid);
       res.status(200).json({ success: true });
     } catch (err) {

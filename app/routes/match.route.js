@@ -10,23 +10,23 @@ const firebaseAuth = require('../policies/firebase.auth');
 
 const router = express.Router();
 
-router.get('/schedule', async (req, res) => {
+router.get('/schedule', firebaseAuth.auth, async (req, res) => {
   await matchController.getMatchSchedule(req, res);
 });
 
-router.get('/happening_schedule', async (req, res) => {
+router.get('/happening_schedule', firebaseAuth.auth, async (req, res) => {
   await matchController.getHappeningSchedule(req, res);
 });
 
-router.get('/all_match_points/:uid', async (req, res) => {
+router.get('/all_match_points/:uid', firebaseAuth.auth, async (req, res) => {
   await matchController.getAllMatchPointsForUser(req, res);
 });
 
-router.get('/get_some_match_to_display', async (req, res) => {
+router.get('/get_some_match_to_display', firebaseAuth.auth, async (req, res) => {
   await matchController.getSomeMatchToDisplay(req, res);
 });
 
-router.get('/leader_board/:matchKey', async (req, res) => {
+router.get('/leader_board/:matchKey', firebaseAuth.auth, async (req, res) => {
   await matchController.getLeaderBoard(req, res);
 });
 

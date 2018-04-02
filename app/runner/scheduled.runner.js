@@ -25,7 +25,7 @@ class ScheduledRunner {
   }
 
   getTimeStamp() {
-    const dummyTimeStamp = 1525188784;
+    const dummyTimeStamp = 1525528801;
     const realTimeStamp = new Date().getTime() / 1000;
     return realTimeStamp;
   }
@@ -46,7 +46,7 @@ class ScheduledRunner {
 
   startMatchRunner() {
     new CronJob('*/15 * * * * *', async () => {
-      // this._fetchMatchRecord().catch(err => { logger.error(err) });
+      this._fetchMatchRecord().catch(err => { logger.error(err) });
     }, null, true);
   }
 

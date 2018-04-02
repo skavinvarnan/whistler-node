@@ -6,10 +6,11 @@
 
 const express = require('express');
 const userController = require('./../controllers/user.controller');
+const firebaseAuth = require('../policies/firebase.auth');
 
 const router = express.Router();
 
-router.get('/init/:name', async (req, res) => {
+router.get('/init/:name/:email', firebaseAuth.auth, async (req, res) => {
   await userController.init(req, res);
 });
 

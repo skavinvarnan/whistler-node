@@ -9,7 +9,8 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const morgan = require('morgan');
 const http = require('http');
-const keygen = require('keygenerator');
+const https = require('https');
+const fs = require('fs');
 
 const connectToMongoDb = require('./mongo/mongo.connect').connectToDb;
 const logger = require('./logger/logger');
@@ -26,18 +27,30 @@ logger.stream = {
   },
 };
 
+const options = {
+  key: fs.readFileSync('./app/ssl/privatekey.pem'),
+  cert: fs.readFileSync('./app/ssl/certificate.pem'),
+};
+
 function startServer() {
   return new Promise((resolve) => {
     try {
       const app = express();
-      const server = http.Server(app);
+      let server;
+      if (config.isProd) {
+        server = https.createServer(options, app);
+      } else {
+        server = http.Server(app);
+      }
 
       app.use(require('express-status-monitor')());
       app.use(cors());
       app.use(bodyParser.json());
       app.use(bodyParser.urlencoded({extended: true}));
 
-      app.use(morgan('dev', {stream: logger.stream}));
+      if (config.showLogs) {
+        app.use(morgan('dev', {stream: logger.stream}));
+      }
 
       app.use('/api', baseRoute);
 
@@ -56,6 +69,7 @@ function startServer() {
     }
   });
 }
+
 
 // Start main server
 connectToMongoDb()

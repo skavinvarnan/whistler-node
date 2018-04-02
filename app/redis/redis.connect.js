@@ -11,7 +11,7 @@ let redis = new r({
   port: config.database.redis.port,
   host: config.database.redis.host,
   family: config.database.redis.family,
-  // password: config.database.redis.password,
+  password: config.database.redis.password,
   db: config.database.redis.db
 });
 

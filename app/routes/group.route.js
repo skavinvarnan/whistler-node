@@ -22,23 +22,23 @@ router.get('/list_all_groups', firebaseAuth.auth, async (req, res) => {
   await groupController.listAllMyGroups(req, res);
 });
 
-router.get('/leave_group/:id', async (req, res) => {
+router.get('/leave_group/:id', firebaseAuth.auth, async (req, res) => {
   await groupController.leaveGroup(req, res);
 });
 
-router.get('/remove_member/:id/:uid', async (req, res) => {
+router.get('/remove_member/:id/:uid', firebaseAuth.auth, async (req, res) => {
   await groupController.removeMember(req, res);
 });
 
-router.get('/delete_group/:id', async (req, res) => {
+router.get('/delete_group/:id', firebaseAuth.auth, async (req, res) => {
   await groupController.deleteGroup(req, res);
 });
 
-router.get('/edit_group/:id/:groupName/:icon', async (req, res) => {
+router.get('/edit_group/:id/:groupName/:icon', firebaseAuth.auth, async (req, res) => {
   await groupController.editGroup(req, res);
 });
 
-router.get('/get_everyone_form_group/:id/:matchKey', async (req, res) => {
+router.get('/get_everyone_form_group/:id/:matchKey', firebaseAuth.auth, async (req, res) => {
   await groupController.getEveryoneFormGroup(req, res);
 });
 

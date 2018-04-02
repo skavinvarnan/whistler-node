@@ -15,8 +15,11 @@ const connectToDb = async () => {
   const port = config.database.mongo.port;
   const name = config.database.mongo.dbName;
   try {
-    // await mongoose.connect(`mongodb://${userName}:${password}@${host}:${port}/${name}`);
-    await mongoose.connect(`mongodb://${host}:${port}/${name}`);
+    if (config.isProd) {
+      await mongoose.connect(`mongodb://${userName}:${password}@${host}:${port}/${name}`);
+    } else {
+      await mongoose.connect(`mongodb://${host}:${port}/${name}`);
+    }
     logger.info('Connected to MongoDB!!!');
   } catch (err) {
     logger.error(`Could not connect to MongoDB. ${err}`);

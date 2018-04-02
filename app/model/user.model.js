@@ -19,15 +19,19 @@ class UserModel {
         required: true,
         index: true,
       },
+      email: {
+        type: String,
+        required: true,
+      },
     }, { strict: true });
 
     this.model = mongoose.model('users', schema);
   }
 
-  async createOrUpdateUser (name, uid) {
+  async createOrUpdateUser (name, uid, email) {
     const user = await this.model.findOne({ uid });
     if (!user) {
-      const objToSave = this.model({ name, uid });
+      const objToSave = this.model({ name, uid, email });
       let savedObj = await objToSave.save();
       return savedObj;
     } else {
