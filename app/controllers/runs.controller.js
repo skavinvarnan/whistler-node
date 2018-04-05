@@ -9,7 +9,9 @@ const errorCodes = require('../error/error.codes').errorCodes;
 const runsModel = require('../model/runs.model');
 const redis = require('../redis/redis.connect');
 const runsFactory = require('../factory/runs.factory');
-const schheduledRunner = require('../runner/scheduled.runner');
+const logger = require('../logger/logger');
+const constants = require('../utils/constants');
+const got = require('got');
 
 class RunsController {
   constructor() {
@@ -51,7 +53,7 @@ class RunsController {
       const string = await redis.get(matchKey);
       const obj = JSON.parse(string);
       if (obj == null) {
-        await schheduledRunner.forceFetchMatchRecord(matchKey);
+        await this.forceFetchMatchRecord(matchKey);
         const string = await redis.get(matchKey);
         const obj = JSON.parse(string);
         if (obj == null) {
@@ -65,6 +67,28 @@ class RunsController {
     } catch(err) {
       errorGenerator(errorCodes.INTERNAL_SERVER_ERROR, err, 500, 'Internal server error', res);
     }
+  }
+
+  async forceFetchMatchRecord(matchKey) {
+    logger.info(`forcefetch match record for ${matchKey}`);
+    try {
+      const redisAccessToken = await redis.get(constants.redisKeys.ACCESS_TOKEN);
+      const response = await got(`https://rest.cricketapi.com/rest/v2/match/${matchKey}/?card_type=full_card&access_token=${redisAccessToken}`);
+      if (response.body) {
+        const bodyObj = JSON.parse(response.body);
+        if (bodyObj.status) {
+          const scoreCard = runsFactory.convertToScoreCardFromRawResponse(bodyObj);
+          redis.set(matchKey, JSON.stringify(scoreCard));
+          bodyObj.time_stamp = new Date().getTime() / 1000;
+          redis.set(`${matchKey}_raw`, JSON.stringify(bodyObj));
+        } else {
+          logger.error(`forcefetch Response status is ${bodyObj.status_code}`);
+        }
+      }
+    } catch (err) {
+      logger.error(`Match record fetch - ${err}`);
+    }
+
   }
 
   async groupUpdateRunsOnDb(matchKey, team, overRunsArray, responseObj) {

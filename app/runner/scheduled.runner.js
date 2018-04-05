@@ -106,29 +106,6 @@ class ScheduledRunner {
 
   }
 
-  async forceFetchMatchRecord(matchKey) {
-    logger.info(`forcefetch match record for ${matchKey}`);
-    try {
-      const redisAccessToken = await redis.get(constants.redisKeys.ACCESS_TOKEN);
-      const response = await got(`https://rest.cricketapi.com/rest/v2/match/${matchKey}/?card_type=full_card&access_token=${redisAccessToken}`);
-      if (response.body) {
-        const bodyObj = JSON.parse(response.body);
-        if (bodyObj.status) {
-          const scoreCard = runsFactory.convertToScoreCardFromRawResponse(bodyObj);
-          redis.set(matchKey, JSON.stringify(scoreCard));
-          bodyObj.time_stamp = new Date().getTime() / 1000;
-          redis.set(`${matchKey}_raw`, JSON.stringify(bodyObj));
-          await dumpModel.dumpMatch(bodyObj);
-        } else {
-          logger.error(`forcefetch Response status is ${bodyObj.status_code}`);
-        }
-      }
-    } catch (err) {
-      logger.error(`Match record fetch - ${err}`);
-    }
-
-  }
-
   async _fetchAccessToken() {
     try {
       logger.info('Fetching access token ' + new Date());
