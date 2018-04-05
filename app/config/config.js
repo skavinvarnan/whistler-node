@@ -8,7 +8,7 @@ const path = require('path');
 
 const config = {};
 
-config.isProd = false;
+config.isProd = true;
 config.showHttpLogs = true;
 
 // Other config files

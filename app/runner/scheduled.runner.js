@@ -109,7 +109,7 @@ class ScheduledRunner {
   async _fetchAccessToken() {
     try {
       logger.info('Fetching access token ' + new Date());
-      const response = await got.post('https://rest.cricketapi.com/rest/v2/auth/', {body: 'access_key=e43c2fcfb531e0f9fe77cf86921124c7&secret_key=8e0fe030700283b89ab80297d2d221d9&app_id=test-id&device_id=server'});
+      const response = await got.post('https://rest.cricketapi.com/rest/v2/auth/', {body: 'access_key=8d13bc900740f69c33d5f9f3032243ff&secret_key=b14b6adea7842240509656b61849fb6e&app_id=server&device_id=google'});
       const body = JSON.parse(response.body);
       if (body.status_code === 200) {
         const accessToken = body.auth.access_token;
