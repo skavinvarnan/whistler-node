@@ -164,7 +164,6 @@ class RunsModel {
             }
           }
         }
-        console.log(`Updating over: ${`${team}_${overRunsArray[i].over}`} runs ${overRunsArray[i].runs}`);
       }
       match['is_toss_done'] = is_toss_done;
       match['is_started'] = is_started;

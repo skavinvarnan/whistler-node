@@ -9,7 +9,7 @@ const path = require('path');
 const config = {};
 
 config.isProd = false;
-config.showLogs = true;
+config.showHttpLogs = true;
 
 // Other config files
 config.log = {};

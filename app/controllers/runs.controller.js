@@ -9,6 +9,7 @@ const errorCodes = require('../error/error.codes').errorCodes;
 const runsModel = require('../model/runs.model');
 const redis = require('../redis/redis.connect');
 const runsFactory = require('../factory/runs.factory');
+const schheduledRunner = require('../runner/scheduled.runner');
 
 class RunsController {
   constructor() {
@@ -50,7 +51,14 @@ class RunsController {
       const string = await redis.get(matchKey);
       const obj = JSON.parse(string);
       if (obj == null) {
-        errorGenerator(errorCodes.NOT_FOUND, null, 500, 'Internal server error', res);
+        await schheduledRunner.forceFetchMatchRecord(matchKey);
+        const string = await redis.get(matchKey);
+        const obj = JSON.parse(string);
+        if (obj == null) {
+          errorGenerator(errorCodes.NOT_FOUND, null, 500, 'Internal server error', res);
+        } else {
+          res.status(200).json({scoreBoard: obj});
+        }
       } else {
         res.status(200).json({scoreBoard: obj});
       }

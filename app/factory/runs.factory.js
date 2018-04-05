@@ -77,6 +77,51 @@ class RunsFactory {
       showUpdated = true;
       title = obj.data.card.short_name;
     } else { // Toss done scenario
+
+      if (obj.data.card.status_overview === 'pre_match') {
+        if (obj.data.card.toss && !this.isEmpty(obj.data.card.toss)) {
+          matchInfo = obj.data.card.toss.str;
+        } else {
+          matchInfo = 'Waiting for toss';
+        }
+      } else if (obj.data.card.status_overview === 'scheduled') {
+        matchInfo = 'Match scheduled to start';
+      } else if (obj.data.card.status_overview === 'in_play') {
+        matchInfo = 'in play'
+      } else if (obj.data.card.status_overview === 'strategic_timeout' || obj.data.card.status_overview === 'drinks_break' || obj.data.card.status_overview === 'lunch_break') {
+        matchInfo = 'Strategic timeout';
+      } else if (obj.data.card.status_overview === 'innings_break') {
+        matchInfo = 'Innings break';
+      } else if (obj.data.card.status_overview === 'rain_delay') {
+        matchInfo = 'Rain delay';
+      } else if (obj.data.card.status_overview === 'stumps') {
+        matchInfo = 'Stumps';
+      } else if (obj.data.card.status_overview === 'bad_light') {
+        matchInfo = 'Bad light';
+      } else if (obj.data.card.status_overview === 'crowd_trouble') {
+        matchInfo = 'Crowd trouble';
+      } else if (obj.data.card.status_overview === 'bad_pitch_condition') {
+        matchInfo = 'Bad pitch condition';
+      } else if (obj.data.card.status_overview === 'result') {
+        matchInfo = obj.data.card.msgs.completed
+      } else if (obj.data.card.status_overview === 'abandoned') {
+        matchInfo = 'Match Abandoned';
+      } else if (obj.data.card.status_overview === 'canceled') {
+        matchInfo = 'Match Canceled';
+      } else if (obj.data.card.status_overview === 'floodlight_failure') {
+        matchInfo = 'Flood light failure';
+      } else if (obj.data.card.status_overview === 'play_suspended_unknown') {
+        matchInfo = 'Play suspended';
+      } else if (obj.data.card.status_overview === 'start_delayed') {
+        matchInfo = 'Start delayed';
+      } else if (obj.data.card.status_overview === 'ball_change') {
+        matchInfo = 'Ball change';
+      } else if (obj.data.card.status_overview === 'player_injured') {
+        matchInfo = 'Player injured';
+      } else {
+        matchInfo = '--';
+      }
+
       if (obj.data.card.now.runs_str) {
         let splitRuns = obj.data.card.now.runs_str.split(' in ');
         teamShortName = `${obj.data.card.teams[obj.data.card.now.batting_team].short_name}`;
@@ -105,7 +150,11 @@ class RunsFactory {
       }
       if (obj.data.card.now.req && !this.isEmpty(obj.data.card.now.req)) {
         rrrLabel = 'RRR:';
-        rrrData = `${obj.data.card.now.req.runs_rate}`
+        rrrData = `${obj.data.card.now.req.runs_rate}`;
+        inningsNumber = '2nd Inn';
+        if (obj.data.card.status_overview === 'in_play') {
+          matchInfo = `${teamShortName} need ${obj.data.card.now.req.runs} runs from ${obj.data.card.now.req.balls} balls`
+        }
       } else {
         rrrLabel = '';
         rrrData = '';
@@ -187,50 +236,6 @@ class RunsFactory {
       }
       showUpdated = true;
       title = obj.data.card.short_name;
-
-      if (obj.data.card.status_overview === 'pre_match') {
-        if (obj.data.card.toss && !this.isEmpty(obj.data.card.toss)) {
-          matchInfo = obj.data.card.toss.str;
-        } else {
-          matchInfo = 'Waiting for toss';
-        }
-      } else if (obj.data.card.status_overview === 'scheduled') {
-        matchInfo = 'Match scheduled to start';
-      } else if (obj.data.card.status_overview === 'in_play') {
-        matchInfo = 'in play'
-      } else if (obj.data.card.status_overview === 'strategic_timeout' || obj.data.card.status_overview === 'drinks_break' || obj.data.card.status_overview === 'lunch_break') {
-        matchInfo = 'Strategic timeout';
-      } else if (obj.data.card.status_overview === 'innings_break') {
-        matchInfo = 'Innings break';
-      } else if (obj.data.card.status_overview === 'rain_delay') {
-        matchInfo = 'Rain delay';
-      } else if (obj.data.card.status_overview === 'stumps') {
-        matchInfo = 'Stumps';
-      } else if (obj.data.card.status_overview === 'bad_light') {
-        matchInfo = 'Bad light';
-      } else if (obj.data.card.status_overview === 'crowd_trouble') {
-        matchInfo = 'Crowd trouble';
-      } else if (obj.data.card.status_overview === 'bad_pitch_condition') {
-        matchInfo = 'Bad pitch condition';
-      } else if (obj.data.card.status_overview === 'result') {
-        matchInfo = obj.data.card.msgs.completed
-      } else if (obj.data.card.status_overview === 'abandoned') {
-        matchInfo = 'Match Abandoned';
-      } else if (obj.data.card.status_overview === 'canceled') {
-        matchInfo = 'Match Canceled';
-      } else if (obj.data.card.status_overview === 'floodlight_failure') {
-        matchInfo = 'Flood light failure';
-      } else if (obj.data.card.status_overview === 'play_suspended_unknown') {
-        matchInfo = 'Play suspended';
-      } else if (obj.data.card.status_overview === 'start_delayed') {
-        matchInfo = 'Start delayed';
-      } else if (obj.data.card.status_overview === 'ball_change') {
-        matchInfo = 'Ball change';
-      } else if (obj.data.card.status_overview === 'player_injured') {
-        matchInfo = 'Player injured';
-      } else {
-        matchInfo = '--';
-      }
 
     }
 

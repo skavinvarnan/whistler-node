@@ -14,7 +14,7 @@ router.get('/ping', async (req, res) => {
   res.status(200).json({ server: 'alive' });
 });
 //
-// router.get('/test123', firebaseAuth.auth, async (req, res) => {
+// router.get('/test123', async (req, res) => {
 //   await testController.test123(req, res);
 // });
 //
@@ -22,7 +22,7 @@ router.get('/ping', async (req, res) => {
 //   await testController.createMatches(req, res);
 // });
 //
-// router.get('/testzzz', firebaseAuth.auth, async (req, res) => {
+// router.get('/testzzz', async (req, res) => {
 //   await testController.test(req, res);
 // });
 

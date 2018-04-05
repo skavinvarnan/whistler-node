@@ -11,6 +11,7 @@ const morgan = require('morgan');
 const http = require('http');
 const https = require('https');
 const fs = require('fs');
+const auth = require('http-auth');
 
 const connectToMongoDb = require('./mongo/mongo.connect').connectToDb;
 const logger = require('./logger/logger');
@@ -43,16 +44,25 @@ function startServer() {
         server = http.Server(app);
       }
 
-      app.use(require('express-status-monitor')());
+      const basic = auth.basic({realm: 'Monitor Area'}, function(user, pass, callback) {
+        callback(user === 'superman' && pass === 'virudhunagar');
+      });
+
+      // Set '' to config path to avoid middleware serving the html page (path must be a string not equal to the wanted route)
+      const statusMonitor = require('express-status-monitor')({ path: '' });
+      app.use(statusMonitor.middleware); // use the "middleware only" property to manage websockets
+
       app.use(cors());
       app.use(bodyParser.json());
       app.use(bodyParser.urlencoded({extended: true}));
 
-      if (config.showLogs) {
+      if (config.showHttpLogs) {
         app.use(morgan('dev', {stream: logger.stream}));
       }
 
       app.use('/api', baseRoute);
+
+      app.get('/here/is/where/you/see/reports/2387dcskasdfc', auth.connect(basic), statusMonitor.pageRoute); // use the pageRoute property to serve the dashboard html page
 
       // Index route
       app.get('/', (req, res) => {

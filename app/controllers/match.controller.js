@@ -19,7 +19,7 @@ class MatchController {
 
   async getHappeningSchedule(req, res) {
     try {
-      const dummyTimeStamp = 1525528801;
+      const dummyTimeStamp = 1521950401;
       const realTimeStamp = new Date().getTime() / 1000;
       const schedule = await matchModel.getHappeningSchedule(realTimeStamp);
       const responseSchedule = [];
@@ -87,7 +87,7 @@ class MatchController {
         await matchModel.updateMatches(arr);
       }
     } catch (err) {
-      logger.error("Failed to update matches");
+      logger.error("Match - schedule Failed to update matches");
     }
 
   }

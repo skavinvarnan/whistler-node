@@ -16,6 +16,7 @@
     "express-status-monitor": "^1.0.1",
     "firebase-admin": "^5.11.0",
     "got": "^8.3.0",
+    "http-auth": "^3.2.3",
     "ioredis": "^3.2.2",
     "keygenerator": "^1.0.4",
     "lodash": "^4.17.5",

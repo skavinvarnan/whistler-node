@@ -53,7 +53,7 @@ class MatchModel {
   async getHappeningSchedule(timeStamp) {
     const ts = timeStamp - (60 * 15);
     const arr = await this.model.find( { $or: [ { start_date_timestamp: { $lt: timeStamp }, approx_end_date_timestamp: { $gt: timeStamp }, approx_completed_ts: {$exists: false} } ,
-        {approx_completed_ts: {$gt: ts}} ] }  )
+        {start_date_timestamp: { $lt: timeStamp }, approx_end_date_timestamp: { $gt: timeStamp }, approx_completed_ts: {$gt: ts}} ] }  )
       .select('status name short_name venue winner_team msgs start_date start_date_timestamp teams related_name key');
     return arr;
   }

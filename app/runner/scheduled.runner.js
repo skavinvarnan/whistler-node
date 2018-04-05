@@ -25,7 +25,7 @@ class ScheduledRunner {
   }
 
   getTimeStamp() {
-    const dummyTimeStamp = 1525528801;
+    const dummyTimeStamp = 1521950401;
     const realTimeStamp = new Date().getTime() / 1000;
     return realTimeStamp;
   }
@@ -68,7 +68,7 @@ class ScheduledRunner {
 
   async _fetchSeasonSchedule() {
     try {
-      const season = 'wmntriseries_2018';
+      const season = 'iplt20_2018';
       const redisAccessToken = await redis.get(constants.redisKeys.ACCESS_TOKEN);
       const response = await got(`https://rest.cricketapi.com/rest/v2/season/${season}/?access_token=${redisAccessToken}`);
       const responseObj = JSON.parse(response.body);
@@ -81,7 +81,6 @@ class ScheduledRunner {
   async _fetchMatchRecord() {
     try {
       const happeningMatches = await matchModel.getHappeningSchedule(this.getTimeStamp());
-      console.log(happeningMatches.length);
       for (let i = 0; i < happeningMatches.length; i++) {
         const hm = happeningMatches[i].toObject();
         const redisAccessToken = await redis.get(constants.redisKeys.ACCESS_TOKEN);
@@ -97,8 +96,31 @@ class ScheduledRunner {
             await dumpModel.dumpMatch(bodyObj);
             await runsController.computeRunsForResponse(bodyObj);
           } else {
-            logger.error(`Response status is ${bodyObj.status_code}`)
+            logger.error(`regularfetch Response status is ${bodyObj.status_code}`)
           }
+        }
+      }
+    } catch (err) {
+      logger.error(`Match record fetch - ${err}`);
+    }
+
+  }
+
+  async forceFetchMatchRecord(matchKey) {
+    logger.info(`forcefetch match record for ${matchKey}`);
+    try {
+      const redisAccessToken = await redis.get(constants.redisKeys.ACCESS_TOKEN);
+      const response = await got(`https://rest.cricketapi.com/rest/v2/match/${matchKey}/?card_type=full_card&access_token=${redisAccessToken}`);
+      if (response.body) {
+        const bodyObj = JSON.parse(response.body);
+        if (bodyObj.status) {
+          const scoreCard = runsFactory.convertToScoreCardFromRawResponse(bodyObj);
+          redis.set(matchKey, JSON.stringify(scoreCard));
+          bodyObj.time_stamp = new Date().getTime() / 1000;
+          redis.set(`${matchKey}_raw`, JSON.stringify(bodyObj));
+          await dumpModel.dumpMatch(bodyObj);
+        } else {
+          logger.error(`forcefetch Response status is ${bodyObj.status_code}`);
         }
       }
     } catch (err) {

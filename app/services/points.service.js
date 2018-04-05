@@ -70,14 +70,11 @@ class PointsFactory {
               pointsForUser = 0;
             }
             await pointsModel.updatePointsForUser(runsObj.match_key, allPredictedUser[j].uid, this.teamRunsKey[teamNumber][i], pointsForUser);
-            console.log(`Point for user ${allPredictedUser[j].uid} for over ${i+1} is ${pointsForUser}`);
           }
           await pointsComputedModel.updatePointsComputedForOver(runsObj.match_key, this.teamRunsKey[teamNumber][i]);
         } else {
-          console.log(`prediction notdone for ${this.teamRunsKey[teamNumber][i]} over also not completed as of now`);
         }
       } else {
-        console.log(`computation done for ${this.teamRunsKey[teamNumber][i]}`);
       }
     }
   }
