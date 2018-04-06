@@ -31,6 +31,7 @@ logger.stream = {
 const options = {
   key: fs.readFileSync('./app/ssl/privatekey.pem'),
   cert: fs.readFileSync('./app/ssl/certificate.pem'),
+  ca: fs.readFileSync('./app/ssl/ca_bundle.pem'),
 };
 
 function startServer() {
