@@ -8,8 +8,9 @@ const path = require('path');
 
 const config = {};
 
-config.isProd = true;
+config.isProd = false;
 config.showHttpLogs = true;
+config.isRunner = false;
 
 // Other config files
 config.log = {};

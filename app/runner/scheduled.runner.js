@@ -57,9 +57,11 @@ class ScheduledRunner {
   }
 
   async _computePoints() {
+    logger.info('Compute points ');
     const happeningMatches = await matchModel.getHappeningSchedule(this.getTimeStamp());
     for (let i = 0; i < happeningMatches.length; i++) {
       const hm = happeningMatches[i].toObject();
+      logger.info(`Compute points happening match ${hm.key} ` );
       const pointsComputedObj = await pointsComputedModel.getForMatchKey(hm.key);
       const runsObj = await runsModel.getRuns(hm.key);
       await pointsService.computeRunsForMatch(pointsComputedObj, runsObj);
@@ -68,6 +70,7 @@ class ScheduledRunner {
 
   async _fetchSeasonSchedule() {
     try {
+      logger.info('Fetching season schedule ' + new Date());
       const season = 'iplt20_2018';
       const redisAccessToken = await redis.get(constants.redisKeys.ACCESS_TOKEN);
       const response = await got(`https://rest.cricketapi.com/rest/v2/season/${season}/?access_token=${redisAccessToken}`);
@@ -79,10 +82,12 @@ class ScheduledRunner {
   }
 
   async _fetchMatchRecord() {
+    logger.info('Fetch match record');
     try {
       const happeningMatches = await matchModel.getHappeningSchedule(this.getTimeStamp());
       for (let i = 0; i < happeningMatches.length; i++) {
         const hm = happeningMatches[i].toObject();
+        logger.info(`Fetch match record happening match ${hm.key} ` );
         const redisAccessToken = await redis.get(constants.redisKeys.ACCESS_TOKEN);
         // const response = await got('http://127.0.0.1:7325/api/utils/test123');
         const response = await got(`https://rest.cricketapi.com/rest/v2/match/${hm.key}/?card_type=full_card&access_token=${redisAccessToken}`);

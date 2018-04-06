@@ -63,7 +63,7 @@ function startServer() {
 
       app.use('/api', baseRoute);
 
-      app.get('/here/is/where/you/see/reports/2387dcskasdfc', auth.connect(basic), statusMonitor.pageRoute); // use the pageRoute property to serve the dashboard html page
+      app.get('/reports/yR7i1qT736qxdyvLbs02/AZskmUIOYGoguc9hIgpE/5g57U06TFkVrwc7dRMhK', auth.connect(basic), statusMonitor.pageRoute); // use the pageRoute property to serve the dashboard html page
 
       // Index route
       app.get('/', (req, res) => {
@@ -81,22 +81,24 @@ function startServer() {
   });
 }
 
-
-// Start main server
-connectToMongoDb()
-  .then(startServer)
-  .then(() => {
-    // Server started
+if (config.isRunner) {
+  // Start runner
+  connectToMongoDb().
+  then(() => {
     scheduledRunner.startAccessTokenRunner();
     scheduledRunner.startScheduleUpdateRunner();
     scheduledRunner.startMatchRunner();
     scheduledRunner.startPointsComputationRunner();
+    logger.info("Runner started");
   });
+} else {
+  // Start main server
+  connectToMongoDb()
+    .then(startServer)
+    .then(() => {
+      // Server started
+    });
+}
 
 
-// // Start runner server
-// connectToMongoDb()
-//   .then(startServer)
-//   .then(() => {
-//     // Server started
-//   });
+

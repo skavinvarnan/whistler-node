@@ -7,6 +7,7 @@
 const predictionModel = require('../model/predictions.model');
 const pointsModel = require('../model/points.model');
 const pointsComputedModel = require('../model/pointscomputed.model');
+const logger = require('../logger/logger');
 
 class PointsFactory {
   constructor() {
@@ -46,6 +47,7 @@ class PointsFactory {
     for (let i = 0; i < this.teamRunsKey[0].length; i++) {
       if (!pointsComputedObj[this.teamRunsKey[teamNumber][i]]) {
         if (runsObj[this.teamRunsFinishedKey[teamNumber][i]]) {
+          logger.info(`computation started for  ${this.teamRunsKey[teamNumber][i]} - ${new Date().getTime()}`);
           const allPredictedUser = await predictionModel.getAllUserWithMatchKeyAndNotPredictedForOver(runsObj.match_key, this.teamRunsKey[teamNumber][i]);
 
           for (let j = 0; j < allPredictedUser.length; j++) {
@@ -72,9 +74,13 @@ class PointsFactory {
             await pointsModel.updatePointsForUser(runsObj.match_key, allPredictedUser[j].uid, this.teamRunsKey[teamNumber][i], pointsForUser);
           }
           await pointsComputedModel.updatePointsComputedForOver(runsObj.match_key, this.teamRunsKey[teamNumber][i]);
+          logger.info(`computation processed for  ${this.teamRunsKey[teamNumber][i]} - ${new Date().getTime()}`);
+          logger.info(`computed users  ${allPredictedUser.length} `);
         } else {
+          logger.info(`prediction notdone for ${this.teamRunsKey[teamNumber][i]} over also not completed as of now`);
         }
       } else {
+        logger.info(`computation done for ${this.teamRunsKey[teamNumber][i]}`);
       }
     }
   }
