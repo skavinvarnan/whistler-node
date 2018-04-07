@@ -10,6 +10,7 @@ const groupModel = require('../model/group.model');
 const pointsModel = require('../model/points.model');
 const userModel = require('../model/user.model');
 const overAllPointsModel = require('../model/overallpoints.model');
+const transferModel = require('../model/transfer.model');
 
 class GroupController {
 
@@ -123,10 +124,16 @@ class GroupController {
         const points = await pointsModel.getPointsForUsersOnlyUidAndTotal(matchKey, group.members);
         const users = await userModel.getUsersWithUids(group.members);
         const overAllPoints = await overAllPointsModel.getOverAllPointsWithUids(group.members);
+        const transfer = await transferModel.getRecord();
 
         let merge1 = users.map(x => Object.assign(x, points.find(y => y.uid === x.uid)));
         let merge2 = merge1.map(x => Object.assign(x, overAllPoints.find(y => y.uid === x.uid)));
-        res.status(200).json({ groupMembers: merge2 });
+
+        if (transfer) {
+          res.status(200).json({ groupMembers: merge2, transfer });
+        } else {
+          res.status(200).json({ groupMembers: merge2 });
+        }
 
       } else {
         errorGenerator(errorCodes.NOT_FOUND, null, 500, 'Internal server error', res);

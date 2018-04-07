@@ -8,7 +8,7 @@ const path = require('path');
 
 const config = {};
 
-config.isRunner = true;
+config.isRunner = false;
 
 config.isProd = true;
 config.showHttpLogs = true;
