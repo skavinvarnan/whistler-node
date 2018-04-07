@@ -63,7 +63,7 @@ function startServer() {
 
       app.use('/api', baseRoute);
 
-      app.get('/reports/yR7i1qT736qxdyvLbs02/AZskmUIOYGoguc9hIgpE/5g57U06TFkVrwc7dRMhK', auth.connect(basic), statusMonitor.pageRoute); // use the pageRoute property to serve the dashboard html page
+      app.get('/status/yR7i1qT736qxdyvLbs02/AZskmUIOYGoguc9hIgpE/5g57U06TFkVrwc7dRMhK', auth.connect(basic), statusMonitor.pageRoute); // use the pageRoute property to serve the dashboard html page
 
       // Index route
       app.get('/', (req, res) => {

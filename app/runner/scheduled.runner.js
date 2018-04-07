@@ -118,7 +118,7 @@ class ScheduledRunner {
       const body = JSON.parse(response.body);
       if (body.status_code === 200) {
         const accessToken = body.auth.access_token;
-        console.log(accessToken);
+        logger.info(`Access token - ${accessToken}`);
         this._saveAccessTokenToRedis(accessToken);
       } else {
         logger.error(body);
