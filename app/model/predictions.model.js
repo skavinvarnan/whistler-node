@@ -122,7 +122,10 @@ class PredictionsModel {
   }
 
   async getAllUserWithMatchKeyAndNotPredictedForOver(match_key, overStr) {
-    const predictions = await this.model.find({ match_key, overStr: { $ne: -1 } })
+    const queryPair = {};
+    queryPair[overStr] = { $ne: -1 };
+    queryPair.match_key = match_key;
+    const predictions = await this.model.find(queryPair);
     return predictions;
   }
 
