@@ -11,6 +11,8 @@ const dumpMatchModel = require('../model/dumpmatch.model');
 const redis = require('../redis/redis.connect');
 const runsModel = require('../model/runs.model');
 const pointsComputedModel = require('../model/pointscomputed.model');
+const pointsModel = require('../model/points.model');
+const predictionsModel = require('../model/predictions.model');
 
 class TestController {
   constructor() {
@@ -62,6 +64,16 @@ class TestController {
     } catch(err) {
       console.log(err);
       errorGenerator(errorCodes.INTERNAL_SERVER_ERROR, err, 500, 'Internal server error', res);
+    }
+  }
+
+  async testtemp(req, res) {
+    try {
+      // let obj = await dumpMatchModel.getFirstRecordAndDelete();
+      //await pointsModel.updateUniqueIdsForAll();
+      res.status(200).json({test: "123"});
+    } catch(err) {
+      errorGenerator(errorCodes.CONFLICT, err, 500, 'Internal server error', res);
     }
   }
 }

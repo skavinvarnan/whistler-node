@@ -17,6 +17,7 @@ class PointsModel {
     const schema = new mongoose.Schema({
       uid: { type: String, required: true, index: true },
       match_key: { type: String, required: true, index: true },
+      uniqueId: { type: String, unique: true },
       team_a: { type: String, required: true },
       team_b: { type: String, required: true },
       a_1: { type: Number, required: true },
@@ -72,7 +73,7 @@ class PointsModel {
       return null;
     }
 
-    const data = { uid, match_key, team_a: runsObj['team_a'], team_b: runsObj['team_b'],
+    const data = { uid, match_key, uniqueId: `${uid}_${match_key}`, team_a: runsObj['team_a'], team_b: runsObj['team_b'],
       a_1: 0, a_2: 0, a_3: 0, a_4: 0, a_5: 0, a_6: 0, a_7: 0, a_8: 0, a_9: 0, a_10: 0,
       a_11: 0, a_12: 0, a_13: 0, a_14: 0, a_15: 0, a_16: 0, a_17: 0, a_18: 0, a_19: 0, a_20: 0,
       b_1: 0, b_2: 0, b_3: 0, b_4: 0, b_5: 0, b_6: 0, b_7: 0, b_8: 0, b_9: 0, b_10: 0,

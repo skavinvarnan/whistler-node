@@ -26,4 +26,8 @@ router.get('/ping', async (req, res) => {
 //   await testController.test(req, res);
 // });
 
+// router.get('/testtemp', async (req, res) => {
+//   await testController.testtemp(req, res);
+// });
+
 module.exports = router;

@@ -13,6 +13,7 @@ class PredictionsModel {
     const schema = new mongoose.Schema({
       uid: { type: String, required: true, index: true },
       match_key: { type: String, required: true, index: true },
+      uniqueId: { type: String, unique: true },
       team_a: { type: String, required: true },
       team_b: { type: String, required: true },
       a_1: { type: Number, required: true },
@@ -79,7 +80,7 @@ class PredictionsModel {
       return null;
     }
 
-    const data = { uid, match_key, team_a: runsObj['team_a'], team_b: runsObj['team_b'],
+    const data = { uid, match_key, uniqueId: `${uid}_${match_key}`, team_a: runsObj['team_a'], team_b: runsObj['team_b'],
       a_1: -1, a_2: -1, a_3: -1, a_4: -1, a_5: -1, a_6: -1, a_7: -1, a_8: -1, a_9: -1, a_10: -1,
       a_11: -1, a_12: -1, a_13: -1, a_14: -1, a_15: -1, a_16: -1, a_17: -1, a_18: -1, a_19: -1, a_20: -1,
       b_1: -1, b_2: -1, b_3: -1, b_4: -1, b_5: -1, b_6: -1, b_7: -1, b_8: -1, b_9: -1, b_10: -1,
@@ -109,7 +110,7 @@ class PredictionsModel {
       return null;
     }
 
-    const data = { uid, match_key, team_a: runsObj['team_a'], team_b: runsObj['team_b'],
+    const data = { uid, match_key, uniqueId: `${uid}_${match_key}`, team_a: runsObj['team_a'], team_b: runsObj['team_b'],
       a_1: -1, a_2: -1, a_3: -1, a_4: -1, a_5: -1, a_6: -1, a_7: -1, a_8: -1, a_9: -1, a_10: -1,
       a_11: -1, a_12: -1, a_13: -1, a_14: -1, a_15: -1, a_16: -1, a_17: -1, a_18: -1, a_19: -1, a_20: -1,
       b_1: -1, b_2: -1, b_3: -1, b_4: -1, b_5: -1, b_6: -1, b_7: -1, b_8: -1, b_9: -1, b_10: -1,
