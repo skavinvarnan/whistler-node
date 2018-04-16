@@ -38,12 +38,12 @@ class PredictionFactory {
     let isInningsComleted = false;
     if (runsObj.first_batting) {
       if (runsObj.innings_number === 'first') {
-        status = "Predictions open. Click predict when the predict button turns blue";
+        status = "Predictions open. Click the predict button when it turns blue";
         statusColor = '#4bb750';
         teamBatting = runsObj.first_batting;
         teamNumber = teamBatting === 'a' ? 0 : 1;
       } else if (runsObj.innings_number === 'second') {
-        status = "Predictions open. Click predict when the predict button turns blue";
+        status = "Predictions open. Click the predict button when it turns blue";
         statusColor = '#4bb750';
         teamBatting = runsObj.first_batting === 'a' ? 'b' : 'a';
         teamNumber = teamBatting === 'a' ? 0 : 1;
@@ -54,7 +54,7 @@ class PredictionFactory {
           teamBatting = runsObj.first_batting === 'a' ? 'b' : 'a';
           teamNumber = teamBatting === 'a' ? 0 : 1;
         } else {
-          status = "Predictions open. Click predict when the predict button turns blue";
+          status = "Predictions open. Click the predict button when it turns blue";
           statusColor = '#4bb750';
           teamBatting = runsObj.first_batting;
           teamNumber = teamBatting === 'a' ? 0 : 1;
