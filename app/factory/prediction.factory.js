@@ -32,6 +32,7 @@ class PredictionFactory {
     let teamBatting = '';
     let status = 'Loading';
     let statusColor = '#007BFA';
+    let showStatus = false;
     let numberOfRecords = 1;
     let futurePredictionsAllowedCount = 2;
     let teamNumber = -1;
@@ -51,6 +52,7 @@ class PredictionFactory {
         if (runsObj.is_completed) {
           status = "Predictions closed. Come back for the next match to predict";
           statusColor = '#b72d32';
+          showStatus = true;
           teamBatting = runsObj.first_batting === 'a' ? 'b' : 'a';
           teamNumber = teamBatting === 'a' ? 0 : 1;
         } else {
@@ -123,7 +125,7 @@ class PredictionFactory {
           }
         }
 
-        return { status, statusColor, teamBatting, response: this.generateTableItems(itemsToDisplay, overItems, runsItems, predictedItems, pointsItems, predictButtonItems) };
+        return { showStatus, status, statusColor, teamBatting, response: this.generateTableItems(itemsToDisplay, overItems, runsItems, predictedItems, pointsItems, predictButtonItems) };
 
       } else {
         const overItems = [];
@@ -162,7 +164,7 @@ class PredictionFactory {
           predictButtonItems.push(this.generateIndividualItem('Predict', '#FFFFFF', true)); // dynamic
         }
 
-        return { status, statusColor, teamBatting, response: this.generateTableItems((numberOfRecords + futurePredictionsAllowedCount), overItems, runsItems, predictedItems, pointsItems, predictButtonItems) };
+        return { showStatus, status, statusColor, teamBatting, response: this.generateTableItems((numberOfRecords + futurePredictionsAllowedCount), overItems, runsItems, predictedItems, pointsItems, predictButtonItems) };
 
       }
     } else {
