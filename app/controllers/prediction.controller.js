@@ -36,7 +36,7 @@ class PredictionController {
       const runsObj = await runsModel.getRuns(matchKey);
       const response = predictionFactory.createUserPredictionTable(runsObj, prediction, points);
       if (response && response.response) {
-        res.status(200).json({predictPointsTableData: response.response, teamBatting: response.teamBatting})
+        res.status(200).json({predictPointsTableData: response.response, teamBatting: response.teamBatting, status: response.status, statusColor: response.statusColor})
       } else {
         errorGenerator(errorCodes.MATCH_YET_TO_START, null, 500, 'Internal server error', res);
       }
