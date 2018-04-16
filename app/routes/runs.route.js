@@ -22,4 +22,8 @@ router.get('/score_board/:matchKey', firebaseAuth.auth, async (req, res) => {
   await runsController.scoreBoard(req, res);
 });
 
+router.get('/score_board/:matchKey/md', firebaseAuth.auth, async (req, res) => {
+  await runsController.scoreBoardWithMd(req, res);
+});
+
 module.exports = router;

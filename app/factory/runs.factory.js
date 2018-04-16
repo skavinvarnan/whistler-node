@@ -239,13 +239,56 @@ class RunsFactory {
 
     }
 
+    let teamAShortName = obj.data.card.teams.a.short_name;
+    let teamBShortName = obj.data.card.teams.b.short_name;
 
+    let squadA = [];
 
+    if (obj.data.card.teams.a.match.playing_xi) {
+      for (let i = 0; i < obj.data.card.teams.a.match.playing_xi.length; i++) {
+        const playerInfo = this.getPlayerInformation(obj, obj.data.card.teams.a.match.playing_xi[i]);
+        let isCaptain = false;
+        let isKeeper = false;
+        if (obj.data.card.teams.a.match.keeper === obj.data.card.teams.a.match.playing_xi[i]) {
+          isKeeper = true;
+        }
+        if (obj.data.card.teams.a.match.captain === obj.data.card.teams.a.match.playing_xi[i]) {
+          isCaptain = true;
+        }
+
+        const constObj = { name: playerInfo.name, isCaptain, isKeeper, key: obj.data.card.teams.a.match.playing_xi[i] };
+        squadA.push(constObj);
+      }
+    }
+
+    let squadB = [];
+
+    if (obj.data.card.teams.b.match.playing_xi) {
+      for (let i = 0; i < obj.data.card.teams.b.match.playing_xi.length; i++) {
+        const playerInfo = this.getPlayerInformation(obj, obj.data.card.teams.b.match.playing_xi[i]);
+        let isCaptain = false;
+        let isKeeper = false;
+        if (obj.data.card.teams.b.match.keeper === obj.data.card.teams.b.match.playing_xi[i]) {
+          isKeeper = true;
+        }
+        if (obj.data.card.teams.b.match.captain === obj.data.card.teams.b.match.playing_xi[i]) {
+          isCaptain = true;
+        }
+
+        const constObj = { name: playerInfo.name, isCaptain, isKeeper, key: obj.data.card.teams.b.match.playing_xi[i] };
+        squadB.push(constObj);
+      }
+    }
+
+    let inn1md = "test";
+    let inn2md = "test";
+    let showScoreCard = false;
     let response = {
       teamShortName, inningsNumber, runsWickets, overNumber, pShipLabel, pShipData, crrLabel, crrData,
       rrrLabel, rrrData, matchInfo, batsmanNameOne, batsmanRunsOne, batsmanBallsOne, batsman4sOne, batsman6sOne,
       batsmanSROne, batsmanNameTwo, batsmanRunsTwo, batsmanBallsTwo, batsman4sTwo, batsman6sTwo, batsmanSRTwo,
-      bowlerName, bowlerOver, bowlerMaiden, bowlerRuns, bowlerWickets, bowlerEconomy, showUpdated, title, battingTeam
+      bowlerName, bowlerOver, bowlerMaiden, bowlerRuns, bowlerWickets, bowlerEconomy, showUpdated, title, battingTeam, teamAShortName,
+      teamBShortName, squadA, squadB, showScoreCard, inn1md, inn2md
     };
     return response;
   }

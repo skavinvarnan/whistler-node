@@ -59,6 +59,30 @@ class RunsController {
         if (obj == null) {
           errorGenerator(errorCodes.NOT_FOUND, null, 500, 'Internal server error', res);
         } else {
+          delete obj.inn1md;
+          delete obj.inn2md;
+          res.status(200).json({scoreBoard: obj});
+        }
+      } else {
+        res.status(200).json({scoreBoard: obj});
+      }
+    } catch(err) {
+      errorGenerator(errorCodes.INTERNAL_SERVER_ERROR, err, 500, 'Internal server error', res);
+    }
+  }
+
+  async scoreBoardWithMd(req, res) {
+    try {
+      const matchKey = req.params.matchKey;
+      const string = await redis.get(matchKey);
+      const obj = JSON.parse(string);
+      if (obj == null) {
+        await this.forceFetchMatchRecord(matchKey);
+        const string = await redis.get(matchKey);
+        const obj = JSON.parse(string);
+        if (obj == null) {
+          errorGenerator(errorCodes.NOT_FOUND, null, 500, 'Internal server error', res);
+        } else {
           res.status(200).json({scoreBoard: obj});
         }
       } else {

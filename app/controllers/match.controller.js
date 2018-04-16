@@ -43,6 +43,7 @@ class MatchController {
     try {
       const schedule = await matchModel.getSchedule();
       const responseSchedule = [];
+      let matchPosition = 0;
       for (let i = 0; i < schedule.length; i++) {
         const sc = schedule[i].toObject();
         sc.team_a = sc.teams.a.key;
@@ -60,10 +61,17 @@ class MatchController {
         weekday[6] = "Saturday";
         sc.displayDate = `${sd.getDate()}/${sd.getMonth() + 1} - ${weekday[sd.getDay()]}`;
         sc.displayTime = `${sd.getHours()}:${sd.getMinutes()}0`;
+        if (sc.msgs && sc.msgs.info) {
+          sc.result = sc.msgs.info;
+        } else {
+          if (matchPosition === 0) {
+            matchPosition = i;
+          }
+        }
         delete sc.teams;
         responseSchedule.push(sc);
       }
-      res.status(200).json({ schedule: responseSchedule })
+      res.status(200).json({ schedule: responseSchedule, matchPosition })
     } catch(err) {
       errorGenerator(errorCodes.INTERNAL_SERVER_ERROR, err, 500, 'Internal server error', res);
     }
@@ -140,10 +148,12 @@ class MatchController {
         uids.push(leaderBoard[i].uid);
       }
       const users = await userModel.getUsersWithUids(uids);
+      const userOverAllPoints = await overAllPointsModel.getOverAllPointsWithUids(uids);
 
       let dataArr = leaderBoard.map(x => Object.assign(x, users.find(y => y.uid === x.uid)));
+      let dataArr2 = dataArr.map(x => Object.assign(x, userOverAllPoints.find(y => y.uid === x.uid)));
 
-      res.status(200).json({ leaderBoard: dataArr })
+      res.status(200).json({ leaderBoard: dataArr2 })
     } catch (err) {
       errorGenerator(errorCodes.INTERNAL_SERVER_ERROR, err, 500, 'Internal server error', res);
     }
