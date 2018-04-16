@@ -30,22 +30,32 @@ class PredictionFactory {
 
   createUserPredictionTable(runsObj, predictionObj, pointsObj) {
     let teamBatting = '';
+    let status = 'Loading';
+    let statusColor = '#007BFA';
     let numberOfRecords = 1;
     let futurePredictionsAllowedCount = 2;
     let teamNumber = -1;
     let isInningsComleted = false;
     if (runsObj.first_batting) {
       if (runsObj.innings_number === 'first') {
+        status = "Predictions open. Click predict when the predict button turns blue";
+        statusColor = '#4bb750';
         teamBatting = runsObj.first_batting;
         teamNumber = teamBatting === 'a' ? 0 : 1;
       } else if (runsObj.innings_number === 'second') {
+        status = "Predictions open. Click predict when the predict button turns blue";
+        statusColor = '#4bb750';
         teamBatting = runsObj.first_batting === 'a' ? 'b' : 'a';
         teamNumber = teamBatting === 'a' ? 0 : 1;
       } else if (runsObj.innings_number === 'other') {
         if (runsObj.is_completed) {
+          status = "Predictions closed. Come back for the next match to predict";
+          statusColor = '#b72d32';
           teamBatting = runsObj.first_batting === 'a' ? 'b' : 'a';
           teamNumber = teamBatting === 'a' ? 0 : 1;
         } else {
+          status = "Predictions open. Click predict when the predict button turns blue";
+          statusColor = '#4bb750';
           teamBatting = runsObj.first_batting;
           teamNumber = teamBatting === 'a' ? 0 : 1;
         }
@@ -113,7 +123,7 @@ class PredictionFactory {
           }
         }
 
-        return { teamBatting, response: this.generateTableItems(itemsToDisplay, overItems, runsItems, predictedItems, pointsItems, predictButtonItems) };
+        return { status, statusColor, teamBatting, response: this.generateTableItems(itemsToDisplay, overItems, runsItems, predictedItems, pointsItems, predictButtonItems) };
 
       } else {
         const overItems = [];
@@ -152,7 +162,7 @@ class PredictionFactory {
           predictButtonItems.push(this.generateIndividualItem('Predict', '#FFFFFF', true)); // dynamic
         }
 
-        return { teamBatting, response: this.generateTableItems((numberOfRecords + futurePredictionsAllowedCount), overItems, runsItems, predictedItems, pointsItems, predictButtonItems) };
+        return { status, statusColor, teamBatting, response: this.generateTableItems((numberOfRecords + futurePredictionsAllowedCount), overItems, runsItems, predictedItems, pointsItems, predictButtonItems) };
 
       }
     } else {
