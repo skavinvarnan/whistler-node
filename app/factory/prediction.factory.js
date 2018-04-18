@@ -34,7 +34,7 @@ class PredictionFactory {
     let statusColor = '#007BFA';
     let showStatus = false;
     let numberOfRecords = 1;
-    let futurePredictionsAllowedCount = 2;
+    let futurePredictionsAllowedCount = 4;
     let teamNumber = -1;
     let isInningsComleted = false;
     if (runsObj.first_batting) {
