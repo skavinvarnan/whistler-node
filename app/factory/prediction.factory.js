@@ -51,7 +51,7 @@ class PredictionFactory {
       } else if (runsObj.innings_number === 'other') {
         if (runsObj.is_completed) {
           status = "Predictions closed. Come back for the next match to predict";
-          status = "Predictions closed. MI vs RCB predictions will start today at 7:30PM";
+          // status = "Predictions closed. MI vs RCB predictions will start today at 7:30PM";
           statusColor = '#b72d32';
           showStatus = true;
           teamBatting = runsObj.first_batting === 'a' ? 'b' : 'a';
