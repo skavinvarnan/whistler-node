@@ -42,6 +42,11 @@ class RunsFactory {
     let showUpdated = true;
     let title = 'Waiting';
     let battingTeam = '';
+    let url = '';
+
+    if (obj.data.card.ref) {
+      url = obj.data.card.ref;
+    }
 
     if (obj.data.card.toss && this.isEmpty(obj.data.card.toss)) {
       teamShortName = '--';
@@ -288,7 +293,7 @@ class RunsFactory {
       rrrLabel, rrrData, matchInfo, batsmanNameOne, batsmanRunsOne, batsmanBallsOne, batsman4sOne, batsman6sOne,
       batsmanSROne, batsmanNameTwo, batsmanRunsTwo, batsmanBallsTwo, batsman4sTwo, batsman6sTwo, batsmanSRTwo,
       bowlerName, bowlerOver, bowlerMaiden, bowlerRuns, bowlerWickets, bowlerEconomy, showUpdated, title, battingTeam, teamAShortName,
-      teamBShortName, squadA, squadB, showScoreCard, inn1md, inn2md
+      teamBShortName, squadA, squadB, showScoreCard, inn1md, inn2md, url
     };
     return response;
   }

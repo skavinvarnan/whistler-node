@@ -45,7 +45,7 @@ class ScheduledRunner {
   }
 
   startMatchRunner() {
-    new CronJob('*/15 * * * * *', async () => {
+    new CronJob('*/5 * * * * *', async () => {
       this._fetchMatchRecord().catch(err => { logger.error(err) });
     }, null, true);
   }
